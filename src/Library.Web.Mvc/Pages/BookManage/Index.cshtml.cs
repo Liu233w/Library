@@ -11,6 +11,13 @@ namespace Library.Web.Pages.BookManage
     {
         public void OnGet()
         {
+            ViewData["List"] = new[]
+            {
+                "first",
+                "second",
+                "third",
+                "fourth"
+            };
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿@page
+@using System.Collections
 @using Library.Web.Startup
 @model Library.Web.Pages.BookManage.IndexModel
 @{
@@ -6,3 +7,9 @@
 }
 
 <h1>Hello World!</h1>
+<ul>
+    @foreach (var item in ViewData["List"] as IEnumerable<string>)
+    {
+        <li>@item</li>
+    }
+</ul>
