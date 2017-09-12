@@ -12,6 +12,7 @@
 @using System.Collections.Generic
 @using System.Threading.Tasks
 @using Abp.Application.Services.Dto
+@using Abp.Runtime.Validation
 @using Abp.UI
 @using Abp.Web.Security.AntiForgery
 @using Library.BookManage
@@ -33,27 +34,7 @@
     public ICollection<string> List2 { get; set; }
     public string SubmitError { get; set; }
 
-    public void OnGet()
-    {
-    // 方案1：动态输入参数
-        ViewData["List"] = new[]
-        {
-            "first",
-            "second",
-            "third",
-            "fourth"
-        };
-
-    // 方案2：采用静态的参数
-        List2 = new List<string>(new[]
-        {
-            "item1",
-            "item2",
-            "item3"
-        });
-    }
-
-    public async Task<IActionResult> OnPostAsync(string title, string description)
+    public async Task OnPostAsync(string title, string description)
     {
         try
         {
@@ -62,34 +43,16 @@
                 Title = title,
                 Description = description
             });
-
-            return RedirectToPage("/BookManage");
         }
-        catch (UserFriendlyException e)
+        catch (AbpValidationException e)
         {
             SubmitError = e.Message;
-
-            return Page();
         }
     }
 
 }
 
 <h1>Hello World!</h1>
-<ul>
-    @foreach (var item in ViewData["List"] as IEnumerable<string>)
-    {
-        <li>@item</li>
-    }
-</ul>
-
-<h2>test1:</h2>
-<ul>
-    @foreach (var item in Model.List2)
-    {
-        <li>@item</li>
-    }
-</ul>
 
 <h2>Get Data From Application Layer:</h2>
 @{ var currentInfo = await Model.SessionAppService.GetCurrentLoginInformations(); }
@@ -103,8 +66,8 @@
     @foreach (var item in books.Items)
     {
         <li>
-            <h4>item.Title</h4>
-            <p>item.Description</p>
+            <h4>@item.Title</h4>
+            <p>@item.Description</p>
         </li>
     }
 </ul>
@@ -120,4 +83,5 @@
     <label>Description: </label>
     <input type="text" name="description"/> <br/>
     <input type="submit"/>
+    @Html.AntiForgeryToken()
 </form>
