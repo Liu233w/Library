@@ -1,9 +1,78 @@
 ﻿@page
+
 @using System.Collections
+@using Abp.Application.Services.Dto
+@using Abp.UI
+@using Abp.Web.Security.AntiForgery
+@using Library.BookManage
+@using Library.BookManage.Dto
+@using Library.Sessions
 @using Library.Web.Startup
-@model Library.Web.Pages.BookManage.IndexModel
+@using Microsoft.AspNetCore.Mvc;
+@using System.Collections.Generic
+@using System.Threading.Tasks
+@using Abp.Application.Services.Dto
+@using Abp.UI
+@using Abp.Web.Security.AntiForgery
+@using Library.BookManage
+@using Library.BookManage.Dto
+@using Library.Sessions
+@using Library.Web.Startup
+@using Microsoft.AspNetCore.Mvc
+
+@inject ISessionAppService SessionAppService
+@inject IBookAppService BookAppService
+
 @{
     ViewBag.CurrentPageName = PageNames.BookManage;
+}
+
+@functions
+{
+
+    public ICollection<string> List2 { get; set; }
+    public string SubmitError { get; set; }
+
+    public void OnGet()
+    {
+    // 方案1：动态输入参数
+        ViewData["List"] = new[]
+        {
+            "first",
+            "second",
+            "third",
+            "fourth"
+        };
+
+    // 方案2：采用静态的参数
+        List2 = new List<string>(new[]
+        {
+            "item1",
+            "item2",
+            "item3"
+        });
+    }
+
+    public async Task<IActionResult> OnPostAsync(string title, string description)
+    {
+        try
+        {
+            await BookAppService.Create(new BookDto()
+            {
+                Title = title,
+                Description = description
+            });
+
+            return RedirectToPage("/BookManage");
+        }
+        catch (UserFriendlyException e)
+        {
+            SubmitError = e.Message;
+
+            return Page();
+        }
+    }
+
 }
 
 <h1>Hello World!</h1>
@@ -23,4 +92,32 @@
 </ul>
 
 <h2>Get Data From Application Layer:</h2>
-<p><h3>User Name:</h3> @Model.CurrentLoginInformations.User.Name</p>
+@{ var currentInfo = await Model.SessionAppService.GetCurrentLoginInformations(); }
+<p><h3>User Name:</h3> @currentInfo.User.Name</p>
+
+<h2>Current Books:</h2>
+@{
+    var books = await Model.BookAppService.GetAll(new PagedAndSortedResultRequestDto());
+}
+<ul>
+    @foreach (var item in books.Items)
+    {
+        <li>
+            <h4>item.Title</h4>
+            <p>item.Description</p>
+        </li>
+    }
+</ul>
+
+<h2>Add Books:</h2>
+@if (Model.SubmitError != null)
+{
+    <label class="alert alert-danger">@Model.SubmitError</label>
+}
+<form method="POST">
+    <label>Title: </label>
+    <input type="text" name="title" /> <br/>
+    <label>Description: </label>
+    <input type="text" name="description"/> <br/>
+    <input type="submit"/>
+</form>
