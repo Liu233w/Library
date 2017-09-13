@@ -1,25 +1,10 @@
 ﻿@page
 
-@using System.Collections
 @using Abp.Application.Services.Dto
-@using Abp.UI
-@using Abp.Web.Security.AntiForgery
 @using Library.BookManage
 @using Library.BookManage.Dto
 @using Library.Sessions
 @using Library.Web.Startup
-@using Microsoft.AspNetCore.Mvc;
-@using System.Collections.Generic
-@using System.Threading.Tasks
-@using Abp.Application.Services.Dto
-@using Abp.Runtime.Validation
-@using Abp.UI
-@using Abp.Web.Security.AntiForgery
-@using Library.BookManage
-@using Library.BookManage.Dto
-@using Library.Sessions
-@using Library.Web.Startup
-@using Microsoft.AspNetCore.Mvc
 
 @inject ISessionAppService SessionAppService
 @inject IBookAppService BookAppService
@@ -31,57 +16,73 @@
 @functions
 {
 
-    public ICollection<string> List2 { get; set; }
-    public string SubmitError { get; set; }
-
-    public async Task OnPostAsync(string title, string description)
+    public async Task<IActionResult> OnPostAsync(string title, string description)
     {
-        try
+        await BookAppService.Create(new BookDto()
         {
-            await BookAppService.Create(new BookDto()
-            {
-                Title = title,
-                Description = description
-            });
-        }
-        catch (AbpValidationException e)
-        {
-            SubmitError = e.Message;
-        }
+            Title = title,
+            Description = description
+        });
+
+        return new RedirectToRouteResult(null);
     }
 
 }
 
-<h1>Hello World!</h1>
+<div>
+    <div class="card">
 
-<h2>Get Data From Application Layer:</h2>
-@{ var currentInfo = await Model.SessionAppService.GetCurrentLoginInformations(); }
-<p><h3>User Name:</h3> @currentInfo.User.Name</p>
+        <div class="header">
+            <h2>Hello World!</h2>
+        </div>
 
-<h2>Current Books:</h2>
-@{
-    var books = await Model.BookAppService.GetAll(new PagedAndSortedResultRequestDto());
-}
-<ul>
-    @foreach (var item in books.Items)
-    {
-        <li>
-            <h4>@item.Title</h4>
-            <p>@item.Description</p>
-        </li>
-    }
-</ul>
+        <div class="body">
 
-<h2>Add Books:</h2>
-@if (Model.SubmitError != null)
-{
-    <label class="alert alert-danger">@Model.SubmitError</label>
-}
-<form method="POST">
-    <label>Title: </label>
-    <input type="text" name="title" /> <br/>
-    <label>Description: </label>
-    <input type="text" name="description"/> <br/>
-    <input type="submit"/>
-    @Html.AntiForgeryToken()
-</form>
+            <h3>Get Data From Application Layer:</h3>
+            @{ var currentInfo = await Model.SessionAppService.GetCurrentLoginInformations(); }
+            <p>
+                <h4>User Name:</h4> @currentInfo.User.Name</p>
+
+            <h3>Current Books:</h3>
+            @{
+                var books = await Model.BookAppService.GetAll(new PagedAndSortedResultRequestDto());
+            }
+            <ul>
+                @foreach (var item in books.Items)
+                {
+                    <li>
+                        <h4>@item.Title</h4>
+                        <p>@item.Description</p>
+                    </li>
+                }
+            </ul>
+
+            <h3>Add Books:</h3>
+            <div>
+                <div class="row clearfix">
+                    <div class="col-sm-12">
+                        <form method="POST" class="form-validation" role="form">
+                            <label>Title</label>
+                            <div class="form-group from-float">
+                                <div class="form-line">
+                                    <input type="text" placeholder="Enter book title here..." name="title" class="form-control" required/>
+                                </div>
+                            </div>
+                            <label>Description</label>
+                            <div class="form-group from-float">
+                                <div class="form-line">
+                                    <input type="text" placeholder="Enter some messages which can describe the book" name="description" class="form-control" required/>
+                                </div>
+                            </div>
+                            <br/>
+                            <button type="submit" class="btn btn-primary waves-effect">Submit</button>
+                            @Html.AntiForgeryToken()
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
