@@ -58,6 +58,12 @@ namespace Library.Web.Startup
                         L("BookManage"),
                         url: "BookManage"
                         )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.SearchBooks,
+                        L("SearchBooks"),
+                        url: "SearchBooks"
+                        )
                 ).AddItem( //Menu items below is just for demonstration!
                     new MenuItemDefinition(
                         "MultiLevelMenu",
