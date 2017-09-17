@@ -21,27 +21,28 @@ namespace Library.LibraryService
 
         public async Task<ListResultDto<BookDto>> SearchBook(SearchBookInput input)
         {
-            Func<Book, string> selector; 
+            List<Book> lst;
             switch (input.Type)
             {
                 case SearchBookType.Author:
-                    selector = book => book.Author;
+                    lst = await _bookRepository.GetAllListAsync(
+                        book => book.Author.Contains(input.KeyWord));
                     break;
                 case SearchBookType.Isbn:
-                    selector = book => book.Isbn;
+                    lst = await _bookRepository.GetAllListAsync(
+                        book => book.Isbn.Contains(input.KeyWord));
                     break;
                 case SearchBookType.Publish:
-                    selector = book => book.Publish;
+                    lst = await _bookRepository.GetAllListAsync(
+                        book => book.Publish.Contains(input.KeyWord));
                     break;
                 case SearchBookType.Title:
-                    selector = book => book.Isbn;
+                    lst = await _bookRepository.GetAllListAsync(
+                        book => book.Title.Contains(input.KeyWord));
                     break;
                 default:
                     throw new UserFriendlyException("Type not supported");
             }
-
-            var lst = _bookRepository.GetAllListAsync(
-                book => selector(book).Contains(input.KeyWord));
 
             return new ListResultDto<BookDto>(ObjectMapper.Map<List<BookDto>>(lst));
         }
