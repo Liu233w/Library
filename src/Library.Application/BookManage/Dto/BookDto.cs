@@ -11,5 +11,8 @@ namespace Library.BookManage.Dto
         public string Title { get; set; }
         [Required]
         public string Description { get; set; }
+        public string Isbn { get; set; }
+        public string Author { get; set; }
+        public string Publish { get; set; }
     }
 }

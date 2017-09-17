@@ -60,28 +60,28 @@
                         </tr>
                     </thead>
                     <tbody>
-
+                        @{
+                            var res = await Model.BookAppService.GetAll(new PagedAndSortedResultRequestDto());
+                        }
+                        @foreach (var item in res.Items)
+                        {
                             <tr>
-                                <td>BookName</td>
-                                <td>Author</td>
-                                <td>PublishingHouse</td>
-                                <td>ISBN</td>
-                                <td>
-                                    <input type="checkbox" name="IsActive" value="true" id="CreateUserIsActive" class="filled-in" checked />
-                                    <label for="CreateUserIsActive"></label>
-                                </td>
+                                <td>@item.Title</td>
+                                <td>@item.Author</td>
+                                <td>@item.Publish</td>
+                                <td>@item.Isbn</td>
                                 <td>Summary</td>
                                 <td class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                         <i class="material-icons">menu</i>
                                     </a>
                                     <ul class="dropdown-menu pull-right">
-                                        <li><a href="#" class="waves-effect waves-block edit-user"  data-toggle="modal" data-target="#UserEditModal"><i class="material-icons">edit</i>Edit</a></li>
+                                        <li><a href="#" class="waves-effect waves-block edit-user" data-toggle="modal" data-target="#UserEditModal"><i class="material-icons">edit</i>Edit</a></li>
                                         <li><a href="#" class="waves-effect waves-block delete-user"><i class="material-icons">delete_sweep</i>Delete</a></li>
                                     </ul>
                                 </td>
                             </tr>
-
+                        }
                     </tbody>
                 </table>
                 <button type="button" class="btn btn-primary btn-circle waves-effect waves-circle waves-float pull-right" data-toggle="modal" data-target="#UserCreateModal">
@@ -140,7 +140,7 @@
                                 <div class="col-sm-12">
                                     <div class="form-group form-float">
                                         <div class="form-line">
-                                            <input type="ime-mode:Disabled" maxlength="13">
+                                            <input type="text" maxlength="13">
                                             <label class="form-label">ISBN</label>
                                         </div>
                                     </div>
