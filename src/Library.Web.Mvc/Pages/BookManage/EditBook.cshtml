@@ -1,0 +1,120 @@
+﻿@page
+
+@using Abp.Application.Services.Dto
+@using Library.BookManage
+@using Library.BookManage.Dto
+    
+@inject IBookAppService BookAppService
+    
+@{
+    Layout = null;
+}
+    
+@functions
+{
+
+    public BookDto book { get; set; }
+
+    public async Task OnPostAsync(long bookId)
+    {
+        if (bookId != 0)
+        {
+            book = await BookAppService.Get(new EntityDto<long>(bookId));
+        }
+        else
+        {
+            book = new BookDto();
+        }
+    }
+
+}
+
+<div>
+    <div class="modal-header">
+        <h4 class="modal-title">
+            @if (Model.book.Title == null)
+            {
+                <span>Create New Book</span>
+            }
+            else
+            {
+                <span>Edit Book <i>@Model.book.Title</i></span>
+            }
+        </h4>
+    </div>
+    <div class="modal-body">
+        <form name="bookForm" role="form" novalidate class="form-validation" method="post">
+            <input type="hidden" name="bookId" value="0" />
+            @Html.AntiForgeryToken()
+            <ul class="nav nav-tabs tab-nav-right" role="tablist">
+                <li role="presentation" class="active"><a href="#create-book-details" data-toggle="tab">Book Details</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane animated fadeIn active" id="create-book-details">
+                    <div class="row clearfix" style="margin-top:10px;">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input class="form-control" type="text" name="title" value="@Model.book.Title">
+                                    <label class="form-label">Title</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-sm-6">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" name="author" class="form-control" value="@Model.book.Author">
+                                    <label class="form-label">Author</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" name="publish" class="form-control" value="@Model.book.Publish">
+                                    <label class="form-label">Publish</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" name="isbn" class="form-control" maxlength="13" value="@Model.book.Isbn">
+                                    <label class="form-label">ISBN</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <input type="text" name="description" class="form-control" value="@Model.book.Description">
+                                    <label class="form-label">Description</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary waves-effect">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function() {
+        var _$form = $('form[name=bookForm]');
+        $.AdminBSB.input.activate(_$form);
+    })();
+</script>

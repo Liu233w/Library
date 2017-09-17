@@ -15,17 +15,41 @@
 
 @functions
 {
-    
-    public async Task<IActionResult> OnPostAsync(string title, string description)
+
+    public async Task<IActionResult> OnPostAsync(long bookId, string title, string description, string author, string publish, string isbn)
     {
-        await BookAppService.Create(new BookDto()
+        var dto = new BookDto()
         {
             Title = title,
-            Description = description
-        });
+            Description = description,
+            Isbn = isbn,
+            Publish = publish,
+            Author = author
+        };
+
+        if (bookId == 0)
+        {
+            await BookAppService.Create(dto);
+        }
+        else
+        {
+            dto.Id = bookId;
+            await BookAppService.Update(dto);
+        }
 
         return new RedirectToRouteResult(null);
     }
+}
+
+@section scripts
+{
+    <environment names="Development">
+        <script src="~/view-resources/Pages/BookManage/Index.js" asp-append-version="true"></script>
+    </environment>
+
+    <!-->environment names="Staging,Production">
+        <script src="~/view-resources/Pages/BookManage/Index.js" asp-append-version="true"></script>
+    </!environment-->
 }
 
 <div class="row clearfix">
@@ -33,7 +57,7 @@
         <div class="card">
             <div class="header">
                 <h2>
-                    BookManage
+                    Book Manage
                 </h2>
                 <ul class="header-dropdown m-r--5">
                     <li class="dropdown">
@@ -50,12 +74,11 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>BookName</th>
+                            <th>Title</th>
                             <th>Author</th>
-                            <th>PublishingHouse</th>
+                            <th>Publish</th>
                             <th>ISBN</th>
-                            <th>IsLeading</th>
-                            <th>Summary</th>
+                            <th>Description</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -70,124 +93,31 @@
                                 <td>@item.Author</td>
                                 <td>@item.Publish</td>
                                 <td>@item.Isbn</td>
-                                <td>Summary</td>
+                                <td>@item.Description</td>
                                 <td class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                         <i class="material-icons">menu</i>
                                     </a>
                                     <ul class="dropdown-menu pull-right">
-                                        <li><a href="#" class="waves-effect waves-block edit-user" data-toggle="modal" data-target="#UserEditModal"><i class="material-icons">edit</i>Edit</a></li>
-                                        <li><a href="#" class="waves-effect waves-block delete-user"><i class="material-icons">delete_sweep</i>Delete</a></li>
+                                        <li><a href="#" class="waves-effect waves-block edit-book" data-toggle="modal" data-target="#BookModal" data-book-id="@item.Id"><i class="material-icons">edit</i>Edit</a></li>
+                                        <li><a href="#" class="waves-effect waves-block delete-book" data-book-id="@item.Id" data-book-title="@item.Title"><i class="material-icons">delete_sweep</i>Delete</a></li>
                                     </ul>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
-                <button type="button" class="btn btn-primary btn-circle waves-effect waves-circle waves-float pull-right" data-toggle="modal" data-target="#UserCreateModal">
+                <button type="button" class="btn btn-primary btn-circle waves-effect waves-circle waves-float pull-right edit-book" data-book-id="0" data-toggle="modal" data-target="#BookModal">
                     <i class="material-icons">add</i>
                 </button>
             </div>
         </div>
     </div>
 </div>
-<div class="modal fade" id="UserCreateModal" tabindex="-1" role="dialog" aria-labelledby="UserCreateModalLabel" data-backdrop="static">
+
+<div class="modal fade" id="BookModal" tabindex="-1" role="dialog" aria-labelledby="BookCreateModalLabel" data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">
-                    <span>CreateNewBook</span>
-                </h4>
-            </div>
-            <div class="modal-body">
-                <form name="userCreateForm" role="form" novalidate class="form-validation">
-                    <ul class="nav nav-tabs tab-nav-right" role="tablist">
-                        <li role="presentation" class="active"><a href="#create-user-details" data-toggle="tab">Book Details</a></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane animated fadeIn active" id="create-user-details">
-                            <div class="row clearfix" style="margin-top:10px;">
-                                <div class="col-sm-12">
-                                    <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input class="form-control" type="text" name="UserName" >
-                                            <label class="form-label">BookName</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row clearfix">
-                                <div class="col-sm-6">
-                                    <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="text" name="Name" class="form-control" ">
-                                            <label class="form-label">Author</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row clearfix">
-                                <div class="col-sm-12">
-                                    <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="text" name="EmailAddress" class="form-control">
-                                            <label class="form-label">PublishingHouse</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row clearfix">
-                                <div class="col-sm-12">
-                                    <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="text" maxlength="13">
-                                            <label class="form-label">ISBN</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row clearfix">
-                                <div class="col-sm-12">
-                                    <div class="form-group form-float">
-                                        <div class="form-line">
-                                            <input type="text" id="ConfirmPassword" name="ConfirmPassword" class="form-control">
-                                            <label class="form-label">summary</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row clearfix">
-                                <div class="col-sm-12">
-                                    <div class="checkbox">
-                                        <input type="checkbox" name="IsActive" value="true" id="CreateUserIsActive" class="filled-in" checked />
-                                        <label for="CreateUserIsActive">IsLeading)</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div role="tabpanel" class="tab-pane animated fadeIn" id="create-user-roles">
-                            <div class="row">
-                                <div class="col-sm-12 ">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary waves-effect">Save</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="UserEditModal" tabindex="-1" role="dialog" aria-labelledby="UserEditModalLabel" data-backdrop="static">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-
         </div>
     </div>
 </div>
