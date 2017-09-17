@@ -9,5 +9,6 @@
         public const string Roles = "Roles";
 
         public const string BookManage = "BookManage";
+        public const string SearchBooks = "SearchBooks";
     }
 }

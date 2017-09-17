@@ -1,0 +1,121 @@
+﻿@page
+
+@using Abp.Application.Services.Dto;
+@using Library.Sessions
+@using Library.Web.Startup
+
+@inject ISessionAppService SessionAppService;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.CurrentPageName = PageNames.SearchBooks;
+}
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Searching Book
+                </h2>
+                <ul class="header-dropdown m-r--5">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a id="RefreshButton" href="javascript:void(0);" class="waves-effect waves-block"><i class="material-icons">refresh</i>Refresh</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <br />
+            <br />
+            <div class="body table-responsive" style="padding-left:250px;">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="form-line">
+                            <input type="text" class="form-control" placeholder="INPUT">
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Book Name<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0);">Book Name</a></li>
+                        <li><a href="javascript:void(0);">Author Name</a></li>
+                        <li><a href="javascript:void(0);">Publishing House</a></li>
+                        <li><a href="javascript:void(0);">ISBN</a></li>
+                    </ul>
+                </div>
+                <button type="button" class="btn bg-blue waves-effect waves-light center" data-toggle="modal" data-target="#UserSearchModal">SEARCH</button>
+            </div>
+            <br />
+            <br />
+            <br />
+            <br />
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="UserSearchModal" tabindex="-1" role="dialog" aria-labelledby="UserSearchModalLabel" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span>Searching Result</span>
+                </h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="row clearfix">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="card">
+
+                            <div class="body table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>BookName</th>
+                                            <th>AuthorNAME</th>
+                                            <th>PublishingHouse</th>
+                                            <th>ISBN</th>
+                                            <th>IsLeading)</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>人性的弱点</td>
+                                            <td>戴尔·卡耐基</td>
+                                            <td>台海出版社</td>
+                                            <td>9787516805060</td>
+                                            <td>Y</td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="UserEditModal" tabindex="-1" role="dialog" aria-labelledby="UserEditModalLabel" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
