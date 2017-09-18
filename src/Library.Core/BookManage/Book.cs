@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
+using Library.LibraryService;
 
 namespace Library.BookManage
 {
@@ -16,5 +18,7 @@ namespace Library.BookManage
         /// 图书馆一共有多少本书（包括借出去的）
         /// </summary>
         public int Count { get; set; }
+
+        public ICollection<BorrowRecords> BorrowRecords { get; set; }
     }
 }
