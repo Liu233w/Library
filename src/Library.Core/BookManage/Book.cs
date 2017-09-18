@@ -19,6 +19,6 @@ namespace Library.BookManage
         /// </summary>
         public int Count { get; set; }
 
-        public ICollection<BorrowRecords> BorrowRecords { get; set; }
+        public ICollection<BorrowRecord> BorrowRecords { get; set; }
     }
 }
