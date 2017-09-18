@@ -8,6 +8,5 @@ namespace Library.LibraryService
 {
     public interface ILibraryAppService : IApplicationService
     {
-        Task<ListResultDto<BookDto>> SearchBook(SearchBookInput input);
     }
 }
