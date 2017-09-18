@@ -16,7 +16,7 @@
 @functions
 {
 
-    public async Task<IActionResult> OnPostAsync(long bookId, string title, string description, string author, string publish, string isbn)
+    public async Task<IActionResult> OnPostAsync(long bookId, string title, string description, string author, string publish, string isbn, int count)
     {
         var dto = new BookDto()
         {
@@ -24,7 +24,8 @@
             Description = description,
             Isbn = isbn,
             Publish = publish,
-            Author = author
+            Author = author,
+            Count = count
         };
 
         if (bookId == 0)
@@ -72,6 +73,7 @@
                             <th>Author</th>
                             <th>Publish</th>
                             <th>ISBN</th>
+                            <th>Count</th>
                             <th>Description</th>
                             <th>Actions</th>
                         </tr>
@@ -87,6 +89,7 @@
                                 <td>@item.Author</td>
                                 <td>@item.Publish</td>
                                 <td>@item.Isbn</td>
+                                <td>@item.Count</td>
                                 <td>@item.Description</td>
                                 <td class="dropdown">
                                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">

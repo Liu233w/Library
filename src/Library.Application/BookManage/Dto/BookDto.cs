@@ -17,6 +17,7 @@ namespace Library.BookManage.Dto
         public string Isbn { get; set; }
         public string Author { get; set; }
         public string Publish { get; set; }
+        public int Count { get; set; }
 
         public void AddValidationErrors(CustomValidationContext context)
         {
@@ -28,6 +29,11 @@ namespace Library.BookManage.Dto
             if (Isbn.Any(letter => !letter.IsIn('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')))
             {
                 context.Results.Add(new ValidationResult("ISBN must be numbers"));
+            }
+
+            if (Count <= 0)
+            {
+                context.Results.Add(new ValidationResult("Count must be greater than 0"));
             }
         }
     }

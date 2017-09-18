@@ -96,7 +96,18 @@
                         <div class="col-sm-12">
                             <div class="form-group form-float">
                                 <div class="form-line">
-                                    <input type="text" name="description" class="form-control" value="@Model.book.Description">
+                                    <input type="text" name="count" class="form-control" value="@Model.book.Count">
+                                    <label class="form-label">Count</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
+                                    <textarea name="description" class="form-control no-resize" value="@Model.book.Description"></textarea>
                                     <label class="form-label">Description</label>
                                 </div>
                             </div>

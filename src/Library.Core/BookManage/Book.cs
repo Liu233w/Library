@@ -11,5 +11,10 @@ namespace Library.BookManage
         public string Isbn { get; set; }
         public string Author { get; set; }
         public string Publish { get; set; }
+
+        /// <summary>
+        /// 图书馆一共有多少本书（包括借出去的）
+        /// </summary>
+        public int Count { get; set; }
     }
 }
