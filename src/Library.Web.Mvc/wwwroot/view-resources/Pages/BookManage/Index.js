@@ -15,7 +15,7 @@
         });
 
         $('.edit-book').click(function (e) {
-            abp.ui.setBusy(_$modal);
+            // abp.ui.setBusy(_$modal);
 
             var bookId = $(this).attr("data-book-id");
 
