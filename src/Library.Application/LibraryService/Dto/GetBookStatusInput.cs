@@ -1,4 +1,4 @@
-﻿namespace Library.BookManage.Dto
+﻿namespace Library.LibraryService.Dto
 {
     public class GetBookStatusInput
     {

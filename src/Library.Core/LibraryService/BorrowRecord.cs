@@ -14,6 +14,14 @@ namespace Library.LibraryService
     public class BorrowRecord : Entity<long>, ICreationAudited<User>, IDeletionAudited<User>, ISoftDelete
     {
         public Book Book { get; set; }
+        public long BookId { get; set; }
+        public long BorrowerUserId { get; set; }
+        /// <summary>
+        /// 续借的次数
+        /// </summary>
+        public int RenewTime { get; set; }
+
+        // 创建时间是借书时间
         public DateTime CreationTime { get; set; }
         public long? CreatorUserId { get; set; }
         public bool IsDeleted { get; set; }

@@ -19,5 +19,15 @@ namespace Library
         /// 一本书最多能借几天
         /// </summary>
         public static readonly TimeSpan UserMaxBorrowDuration = new TimeSpan(14, 0, 0, 0);
+
+        /// <summary>
+        /// 续借一次可以借几天
+        /// </summary>
+        public static readonly TimeSpan RenewDuration = new TimeSpan(7, 0, 0, 0);
+
+        /// <summary>
+        /// 最多能续借几次
+        /// </summary>
+        public const int MaxRenewTime = 3;
     }
 }

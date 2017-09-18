@@ -1,7 +1,7 @@
 ﻿using System;
 using Library.Users.Dto;
 
-namespace Library.BookManage.Dto
+namespace Library.LibraryService.Dto
 {
     public class BookUserState
     {
@@ -10,6 +10,8 @@ namespace Library.BookManage.Dto
         /// <summary>
         /// 应还时间
         /// </summary>
-        public DateTime ReturnTime { get; set; }
+        public DateTime BorrowTimeLimit { get; set; }
+
+        public BorrowRecordDto Record { get; set; }
     }
 }
