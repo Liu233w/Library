@@ -57,6 +57,8 @@
         <link href="~/view-resources/Views/_Bundles/shared-layout.min.css" rel="stylesheet" asp-append-version="true" />
     </environment>
 
+    <link href="https://cdn.bootcss.com/datatables/1.10.16/css/dataTables.bootstrap.min.css" rel="stylesheet">
+
     <!-- View specific styles -->
     @RenderSection("styles", required: false)
 
@@ -184,6 +186,9 @@
     <environment names="Staging,Production">
         <script src="~/view-resources/Views/_Bundles/shared-layout.min.js" asp-append-version="true"></script>
     </environment>
+    
+    <script src="https://cdn.bootcss.com/datatables/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.bootcss.com/datatables/1.10.16/js/dataTables.bootstrap.min.js"></script>
 
     <script>
     //Localizing momentjs

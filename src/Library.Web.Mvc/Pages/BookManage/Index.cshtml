@@ -45,6 +45,23 @@
 @section scripts
 {
     <script src="~/view-resources/Pages/BookManage/Index.js" asp-append-version="true"></script>
+    
+    <script>
+        $(function() {
+            $("#table").DataTable({
+                responsive: true,
+                columns: [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null, // 第六列和第七列禁止排序和筛选
+                    { orderable: false, searchable: false },
+                    { orderable: false, searchable: false }
+                ]
+            });
+        });
+    </script>
 }
 
 <div class="row clearfix">
@@ -66,7 +83,7 @@
                 </ul>
             </div>
             <div class="body table-responsive">
-                <table class="table">
+                <table class="table" id="table">
                     <thead>
                         <tr>
                             <th>Title</th>
