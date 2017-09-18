@@ -44,7 +44,7 @@
     </div>
     <div class="modal-body">
         <form name="bookForm" role="form" novalidate class="form-validation" method="post">
-            <input type="hidden" name="bookId" value="0" />
+            <input type="hidden" name="bookId" value="@Model.book.Id" />
             @Html.AntiForgeryToken()
             <ul class="nav nav-tabs tab-nav-right" role="tablist">
                 <li role="presentation" class="active"><a href="#create-book-details" data-toggle="tab">Book Details</a></li>
