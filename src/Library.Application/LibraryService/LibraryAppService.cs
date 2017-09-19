@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
@@ -8,10 +7,8 @@ using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using Abp.UI;
 using Library.BookManage;
-using Library.BookManage.Dto;
 using Library.LibraryService.Dto;
 using Microsoft.EntityFrameworkCore;
-using Remotion.Linq.Clauses;
 
 namespace Library.LibraryService
 {
