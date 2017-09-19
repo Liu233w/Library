@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using Abp;
 using Abp.Authorization.Users;
@@ -8,10 +9,13 @@ using Abp.Events.Bus.Entities;
 using Abp.Runtime.Session;
 using Abp.TestBase;
 using Library.Authorization.Users;
+using Library.BookManage;
 using Library.EntityFrameworkCore;
 using Library.EntityFrameworkCore.Seed.Host;
 using Library.EntityFrameworkCore.Seed.Tenants;
 using Library.MultiTenancy;
+using Library.Users;
+using Library.Users.Dto;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -19,6 +23,8 @@ namespace Library.Tests
 {
     public abstract class LibraryTestBase : AbpIntegratedTestBase<LibraryTestModule>
     {
+        private readonly IUserAppService _userAppService;
+
         protected LibraryTestBase()
         {
             void NormalizeDbContext(LibraryDbContext context)
@@ -44,6 +50,9 @@ namespace Library.Tests
                 NormalizeDbContext(context);
                 new TenantRoleAndUserBuilder(context, 1).Create();
             });
+
+            //Inject Service
+            _userAppService = Resolve<IUserAppService>();
 
             LoginAsDefaultTenantAdmin();
         }
@@ -206,5 +215,59 @@ namespace Library.Tests
             var tenantId = AbpSession.GetTenantId();
             return await UsingDbContext(context => context.Tenants.SingleAsync(t => t.Id == tenantId));
         }
+
+        #region Mocks
+
+        protected async Task InjectBooksDataAsync()
+        {
+            await UsingDbContextAsync(async ctx =>
+            {
+                await ctx.Books.AddAsync(new Book
+                {
+                    Id = 1,
+                    Isbn = "1234567890",
+                    Author = "Author1",
+                    Count = 6,
+                    Description = "Book1's Description",
+                    Publish = "Publisher1",
+                    Title = "Book1"
+                });
+
+                await ctx.Books.AddAsync(new Book
+                {
+                    Id = 2,
+                    Isbn = "1234567892",
+                    Author = "Author2",
+                    Count = 3,
+                    Description = "Book2's Description",
+                    Publish = "Publisher2",
+                    Title = "Book2"
+                });
+            });
+        }
+
+        protected async Task InjectTestUser()
+        {
+            await _userAppService.Create(
+                new CreateUserDto
+                {
+                    EmailAddress = "john@volosoft.com",
+                    IsActive = true,
+                    Name = "John",
+                    Surname = "Nash",
+                    Password = "123qwe",
+                    UserName = "john.nash"
+                });
+        }
+
+        protected async Task<User> FindJohnAsync()
+        {
+            return await UsingDbContextAsync(async ctx =>
+            {
+                return await ctx.Users.FirstOrDefaultAsync(item => item.UserName == "john.nash");
+            });
+        }
+
+        #endregion
     }
 }
