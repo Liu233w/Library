@@ -107,14 +107,14 @@ namespace Library.LibraryService
             };
         }
 
-        private async Task<BorrowRecordWithBookTitleAndOutdatedTime> GetOutputRecord(BorrowRecord record)
+        private async Task<BorrowRecordWithAdditionalInfo> GetOutputRecord(BorrowRecord record)
         {
             await _bookInfoManager.LoadBookFromRecordAsync(record);
 
-            var res = record.MapTo<BorrowRecordWithBookTitleAndOutdatedTime>();
+            var res = record.MapTo<BorrowRecordWithAdditionalInfo>();
 
-            res.BookTitle = record.Book.Title;
-            res.BorrowTimeLimit = record.GetOutdatedTime();
+            var user = UserManager.GetUserByIdAsync(record.BorrowerUserId);
+            res.UserInfo = user.MapTo<UserDto>();
 
             return res;
         }

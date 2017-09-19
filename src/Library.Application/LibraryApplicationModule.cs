@@ -29,7 +29,7 @@ namespace Library
                 cfg.AddProfiles(thisAssembly);
 
                 //Add maps
-                cfg.CreateMap<BorrowRecord, BorrowRecordWithBookTitleAndOutdatedTime>()
+                cfg.CreateMap<BorrowRecord, BorrowRecordWithAdditionalInfo>()
                     .ForMember(dest => dest.BookTitle, opts => opts.MapFrom(
                         src => src.Book.Title))
                     .ForMember(dest => dest.BorrowTimeLimit, opts => opts.MapFrom(
