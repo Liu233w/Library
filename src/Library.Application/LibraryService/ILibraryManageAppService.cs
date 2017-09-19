@@ -16,10 +16,26 @@ namespace Library.LibraryService
         /// <returns></returns>
         Task<BookWithStatusAndRecord> GetBookStatus(GetBookStatusInput input);
 
+        /// <summary>
+        /// 借书，如果书籍不存在、用户不存在或者用户已经借过了这本书，都会抛出异常
+        /// 用户借书的数量不能超过最大借书数量限制，否则抛出异常。
+        /// 参见 <see cref="LibraryConsts.UserMaxBorrowCount"/>
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         Task BorrowBook(BorrowBookInput input);
 
+        /// <summary>
+        /// 还书，如果书籍不存在、用户不存在或者用户没有借过这本书，都会抛出异常
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
         Task ReturnBook(ReturnBookInput input);
 
+        /// <summary>
+        /// 获取过期未还书籍的记录
+        /// </summary>
+        /// <returns></returns>
         Task<GetOutdatedBorrowRecordOutput> GetOutdatedBorrowRecord();
     }
 }

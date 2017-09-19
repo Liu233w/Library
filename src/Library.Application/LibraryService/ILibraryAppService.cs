@@ -15,7 +15,7 @@ namespace Library.LibraryService
         Task<ListResultDto<BookWithStatusAndMine>> GetBookList();
 
         /// <summary>
-        /// 续借图书
+        /// 续借图书，如果续借次数超过限制，会抛出异常。最多续借次数参见 <see cref="LibraryConsts.MaxRenewTime"/>
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
