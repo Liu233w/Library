@@ -19,13 +19,11 @@ namespace Library.LibraryService
         private readonly IRepository<Book, long> _bookRepository;
         private readonly IRepository<BorrowRecord, long> _borrowedRecordRepository;
         private readonly BookInfoManager _bookInfoManager;
-        private readonly UserManager _userManager;
 
-        public LibraryManageAppService(IRepository<Book, long> bookRepository, BookInfoManager bookInfoManager, UserManager userManager, IRepository<BorrowRecord, long> borrowedRecordRepository)
+        public LibraryManageAppService(IRepository<Book, long> bookRepository, BookInfoManager bookInfoManager, IRepository<BorrowRecord, long> borrowedRecordRepository)
         {
             _bookRepository = bookRepository;
             _bookInfoManager = bookInfoManager;
-            _userManager = userManager;
             _borrowedRecordRepository = borrowedRecordRepository;
         }
 
@@ -40,7 +38,7 @@ namespace Library.LibraryService
             var records = new List<BookUserState>();
             foreach (var record in book.BorrowRecords)
             {
-                var user = await _userManager.FindByIdAsync(record.BorrowerUserId.ToString());
+                var user = await UserManager.GetUserByIdAsync(record.BorrowerUserId);
                 records.Add(new BookUserState
                 {
                     User = user.MapTo<UserDto>(),
@@ -64,7 +62,7 @@ namespace Library.LibraryService
                 throw new UserFriendlyException("That book has been borrowed out");
             }
 
-            var user = await _userManager.FindByNameOrEmailAsync(input.UserNameOrEmail);
+            var user = await UserManager.FindByNameOrEmailAsync(input.UserNameOrEmail);
 
             var record = await _bookInfoManager.FindRecordOrNull(input.BookId, user.Id);
             if (record != null)
@@ -84,7 +82,7 @@ namespace Library.LibraryService
         {
             await _bookInfoManager.EnsureBookExistAsync(input.BookId);
 
-            var user = await _userManager.FindByNameOrEmailAsync(input.UserNameOrEmail);
+            var user = await UserManager.FindByNameOrEmailAsync(input.UserNameOrEmail);
 
             var record = await _bookInfoManager.FindRecordOrNull(input.BookId, user.Id);
             if (record == null)
