@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
+using Abp.Authorization;
+using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using Abp.UI;
 using Library.BookManage;
@@ -26,9 +28,21 @@ namespace Library.LibraryService
             _bookInfoManager = bookInfoManager;
         }
 
+        [AbpAuthorize]
         public async Task RenewBook(RenewBookInput input)
         {
-            throw new NotImplementedException();
+            var record = await _bookInfoManager.GetUserRecordOrNullAsync(AbpSession.UserId.Value, input.BookId);
+            if (record == null)
+            {
+                throw new UserFriendlyException("User haven't borrow that book or book is not exist");
+            }
+
+            if (record.RenewTime >= LibraryConsts.MaxRenewTime)
+            {
+                throw new UserFriendlyException($"You can only renew this book {LibraryConsts.MaxRenewTime} times");
+            }
+
+            ++record.RenewTime;
         }
 
         public async Task<ListResultDto<BookWithStatusAndMine>> GetUserBook()
@@ -42,8 +56,7 @@ namespace Library.LibraryService
             foreach (var borrowRecord in borrowedList)
             {
                 var item = ObjectMapper.Map<BookWithStatusAndMine>(borrowRecord.Book);
-                item.BorrowTimeLimit = borrowRecord.CreationTime + LibraryConsts.UserMaxBorrowDuration
-                                       + borrowRecord.RenewTime * LibraryConsts.RenewDuration;
+                item.BorrowTimeLimit = borrowRecord.GetOutdatedTime();
                 item.Borrowed = true;
                 item.Avaliable = await _bookInfoManager.GetAvailableAsync(borrowRecord.Book);
 
@@ -53,14 +66,49 @@ namespace Library.LibraryService
             return new ListResultDto<BookWithStatusAndMine>(resList);
         }
 
-        public async Task<ListResultDto<BookWithStatusAndMine>> GetBookListOutput()
+        public async Task<ListResultDto<BookWithStatusAndMine>> GetBookList()
         {
-            throw new NotImplementedException();
+            var books = await _bookRepository.GetAllListAsync();
+
+            // 未登录的用户不需要获取当前状态
+            if (!AbpSession.UserId.HasValue)
+            {
+                return new ListResultDto<BookWithStatusAndMine>(
+                    await books.MapAsync(GetBookWithNoUserStatus));
+            }
+
+            var userId = AbpSession.UserId.Value;
+
+            return new ListResultDto<BookWithStatusAndMine>(
+                await books.MapAsync(async item => 
+                    await GetBookWithUserStatusItemAsync(item, userId)));
         }
 
-        public async Task BorrowBook(BorrowBookInput input)
+        private async Task<BookWithStatus> GetBookWithStatusFromBookAsync(Book book)
         {
-            throw new NotImplementedException();
+            var res = book.MapTo<BookWithStatus>();
+            res.Avaliable = await _bookInfoManager.GetAvailableAsync(book);
+            return res;
+        }
+
+        private async Task<BookWithStatusAndMine> GetBookWithNoUserStatus(Book book)
+        {
+            var t = await GetBookWithStatusFromBookAsync(book);
+            // bool 的默认值是 false，因此默认就是没有借书
+            return t.MapTo<BookWithStatusAndMine>();
+        }
+
+        private async Task<BookWithStatusAndMine> GetBookWithUserStatusItemAsync(Book book, long userId)
+        {
+            var bookWithStatus = await GetBookWithStatusFromBookAsync(book);
+            var res = bookWithStatus.MapTo<BookWithStatusAndMine>();
+
+            var record = await _bookInfoManager.GetUserRecordOrNullAsync(userId, res.Id);
+            res.Borrowed = true;
+
+            res.BorrowTimeLimit = record.GetOutdatedTime();
+
+            return res;
         }
     }
 }

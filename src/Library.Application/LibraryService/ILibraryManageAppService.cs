@@ -14,7 +14,7 @@ namespace Library.LibraryService
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        Task<GetBookStatusOutput> GetBookStatus(GetBookStatusInput input);
+        Task<BookWithStatusAndRecord> GetBookStatus(GetBookStatusInput input);
 
         Task BorrowBook(BorrowBookInput input);
 

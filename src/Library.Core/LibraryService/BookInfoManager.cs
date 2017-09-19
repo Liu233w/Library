@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Dependency;
 using Abp.Domain.Repositories;
+using Abp.Domain.Uow;
 using Abp.EntityFrameworkCore.Repositories;
 using Abp.UI;
 using Library.BookManage;
@@ -20,11 +22,21 @@ namespace Library.LibraryService
             _borrowRecordRepository = borrowRecordRepository;
         }
 
-        public async Task LoadAssociatedRecordAsync(Book book)
+        [UnitOfWork]
+        public async Task LoadAssociatedRecordsAsync(Book book)
         {
             await _bookRepository.GetDbContext()
                 .Entry(book)
                 .Collection(item => item.BorrowRecords)
+                .LoadAsync();
+        }
+
+        [UnitOfWork]
+        public async Task LoadBookFromRecordAsync(BorrowRecord record)
+        {
+            await _borrowRecordRepository.GetDbContext()
+                .Entry(record)
+                .Reference(item => item.Book)
                 .LoadAsync();
         }
 
@@ -33,6 +45,7 @@ namespace Library.LibraryService
         /// </summary>
         /// <param name="book"></param>
         /// <returns></returns>
+        [UnitOfWork]
         public async Task<int> GetAvailableAsync(Book book)
         {
             var borrowCount = await _borrowRecordRepository.GetAll()
@@ -41,6 +54,7 @@ namespace Library.LibraryService
             return book.Count - borrowCount;
         }
 
+        [UnitOfWork]
         public async Task<int> GetAvailableAsync(long bookId)
         {
             var book = await _bookRepository.GetAsync(bookId);
@@ -53,7 +67,8 @@ namespace Library.LibraryService
         /// <param name="userId"></param>
         /// <param name="bookId"></param>
         /// <returns></returns>
-        public async Task<BorrowRecord> GetUserRecordAsync(long userId, long bookId)
+        [UnitOfWork]
+        public async Task<BorrowRecord> GetUserRecordOrNullAsync(long userId, long bookId)
         {
             return await _borrowRecordRepository.FirstOrDefaultAsync(
                 item => item.CreatorUserId == userId && item.BookId == bookId);
@@ -63,6 +78,7 @@ namespace Library.LibraryService
         /// 查找 Book，如果不存在，抛出UserFriendlyException；否则返回 Book
         /// </summary>
         /// <exception cref="UserFriendlyException"></exception>
+        [UnitOfWork]
         public async Task<Book> EnsureBookExistAsync(long bookId)
         {
             var book = await _bookRepository.FirstOrDefaultAsync(bookId);
@@ -73,6 +89,7 @@ namespace Library.LibraryService
             return book;
         }
 
+        [UnitOfWork]
         public Task<BorrowRecord> FindRecordOrNull(long bookId, long userId)
         {
             return _borrowRecordRepository.FirstOrDefaultAsync(

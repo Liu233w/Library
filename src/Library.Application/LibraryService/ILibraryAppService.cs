@@ -12,7 +12,7 @@ namespace Library.LibraryService
         /// 获取书籍列表（给用户看的）
         /// </summary>
         /// <returns></returns>
-        Task<ListResultDto<BookWithStatusAndMine>> GetBookListOutput();
+        Task<ListResultDto<BookWithStatusAndMine>> GetBookList();
 
         /// <summary>
         /// 续借图书

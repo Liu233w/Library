@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
@@ -9,6 +10,7 @@ using Library.Authorization.Users;
 using Library.BookManage;
 using Library.LibraryService.Dto;
 using Library.Users.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace Library.LibraryService
 {
@@ -27,10 +29,10 @@ namespace Library.LibraryService
             _borrowedRecordRepository = borrowedRecordRepository;
         }
 
-        public async Task<GetBookStatusOutput> GetBookStatus(GetBookStatusInput input)
+        public async Task<BookWithStatusAndRecord> GetBookStatus(GetBookStatusInput input)
         {
             var book = await _bookRepository.GetAsync(input.BookId);
-            await _bookInfoManager.LoadAssociatedRecordAsync(book);
+            await _bookInfoManager.LoadAssociatedRecordsAsync(book);
 
             var statusBooks = ObjectMapper.Map<BookWithStatus>(book);
             statusBooks.Avaliable = book.Count - book.BorrowRecords.Count;
@@ -46,7 +48,7 @@ namespace Library.LibraryService
                     Record = record.MapTo<BorrowRecordDto>()
                 });
             }
-            return new GetBookStatusOutput
+            return new BookWithStatusAndRecord
             {
                 Book = statusBooks,
                 BorrowedBooks = records,
@@ -95,7 +97,26 @@ namespace Library.LibraryService
 
         public async Task<GetOutdatedBorrowRecordOutput> GetOutdatedBorrowRecord()
         {
-            throw new System.NotImplementedException();
+            var records = await _borrowedRecordRepository.GetAll()
+                .Where(item => item.GetOutdatedTime() >= DateTime.Now)
+                .ToListAsync();
+
+            return new GetOutdatedBorrowRecordOutput
+            {
+                Items = await records.MapAsync(GetOutputRecord)
+            };
+        }
+
+        private async Task<BorrowRecordWithBookTitleAndOutdatedTime> GetOutputRecord(BorrowRecord record)
+        {
+            await _bookInfoManager.LoadBookFromRecordAsync(record);
+
+            var res = record.MapTo<BorrowRecordWithBookTitleAndOutdatedTime>();
+
+            res.BookTitle = record.Book.Title;
+            res.BorrowTimeLimit = record.GetOutdatedTime();
+
+            return res;
         }
     }
 }
