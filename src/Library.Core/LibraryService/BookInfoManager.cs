@@ -62,19 +62,6 @@ namespace Library.LibraryService
         }
 
         /// <summary>
-        /// 获取某用户对某本书的借阅情况，如果借了；返回借阅记录，如果没借（或者还了），返回null
-        /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="bookId"></param>
-        /// <returns></returns>
-        [UnitOfWork]
-        public async Task<BorrowRecord> GetUserRecordOrNullAsync(long userId, long bookId)
-        {
-            return await _borrowRecordRepository.FirstOrDefaultAsync(
-                item => item.CreatorUserId == userId && item.BookId == bookId);
-        }
-
-        /// <summary>
         /// 查找 Book，如果不存在，抛出UserFriendlyException；否则返回 Book
         /// </summary>
         /// <exception cref="UserFriendlyException"></exception>
@@ -89,8 +76,14 @@ namespace Library.LibraryService
             return book;
         }
 
+        /// <summary>
+        /// 获取某用户对某本书的借阅情况，如果借了；返回借阅记录，如果没借（或者还了），返回null
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="bookId"></param>
+        /// <returns></returns>
         [UnitOfWork]
-        public Task<BorrowRecord> FindRecordOrNull(long bookId, long userId)
+        public Task<BorrowRecord> FindRecordOrNullAsync(long bookId, long userId)
         {
             return _borrowRecordRepository.FirstOrDefaultAsync(
                 item => item.BookId == bookId && item.BorrowerUserId == userId);

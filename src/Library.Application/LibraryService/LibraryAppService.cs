@@ -44,7 +44,7 @@ namespace Library.LibraryService
         [AbpAuthorize]
         public async Task RenewBook(RenewBookInput input)
         {
-            var record = await _bookInfoManager.GetUserRecordOrNullAsync(AbpSession.UserId.Value, input.BookId);
+            var record = await _bookInfoManager.FindRecordOrNullAsync(input.BookId, AbpSession.UserId.Value);
             if (record == null)
             {
                 throw new UserFriendlyException("User haven't borrow that book or book is not exist");
@@ -117,7 +117,7 @@ namespace Library.LibraryService
             var bookWithStatus = await GetBookWithStatusFromBookAsync(book);
             var res = ObjectMapper.Map<BookWithStatusAndMine>(bookWithStatus);
 
-            var record = await _bookInfoManager.GetUserRecordOrNullAsync(userId, res.Id);
+            var record = await _bookInfoManager.FindRecordOrNullAsync(res.Id, userId);
             if (record == null)
             {
                 // 没有借这本书

@@ -63,7 +63,7 @@ namespace Library.LibraryService
 
             var user = await UserManager.FindByNameOrEmailAsync(input.UserNameOrEmail);
 
-            var record = await _bookInfoManager.FindRecordOrNull(input.BookId, user.Id);
+            var record = await _bookInfoManager.FindRecordOrNullAsync(input.BookId, user.Id);
             if (record != null)
             {
                 throw new UserFriendlyException("The user has borrowed this book");
@@ -83,7 +83,7 @@ namespace Library.LibraryService
 
             var user = await UserManager.FindByNameOrEmailAsync(input.UserNameOrEmail);
 
-            var record = await _bookInfoManager.FindRecordOrNull(input.BookId, user.Id);
+            var record = await _bookInfoManager.FindRecordOrNullAsync(input.BookId, user.Id);
             if (record == null)
             {
                 throw new UserFriendlyException("The user heavn't borrow this book");
