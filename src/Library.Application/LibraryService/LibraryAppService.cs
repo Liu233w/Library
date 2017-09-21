@@ -101,9 +101,16 @@ namespace Library.LibraryService
             var res = bookWithStatus.MapTo<BookWithStatusAndMine>();
 
             var record = await _bookInfoManager.GetUserRecordOrNullAsync(userId, res.Id);
-            res.Borrowed = true;
-
-            res.BorrowTimeLimit = record.GetOutdatedTime();
+            if (record == null)
+            {
+                // 没有借这本书
+                res.Borrowed = false;
+            }
+            else
+            {
+                res.Borrowed = true;
+                res.BorrowTimeLimit = record.GetOutdatedTime();
+            }
 
             return res;
         }
