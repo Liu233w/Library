@@ -218,31 +218,35 @@ namespace Library.Tests
 
         #region Mocks
 
+        protected Book Book1 => new Book
+        {
+            Id = 1,
+            Isbn = "1234567890",
+            Author = "Author1",
+            Count = 6,
+            Description = "Book1's Description",
+            Publish = "Publisher1",
+            Title = "Book1"
+        };
+
+        protected Book Book2 => new Book
+        {
+            Id = 2,
+            Isbn = "1234567892",
+            Author = "Author2",
+            Count = 3,
+            Description = "Book2's Description",
+            Publish = "Publisher2",
+            Title = "Book2"
+        };
+
         protected async Task InjectBooksDataAsync()
         {
             await UsingDbContextAsync(async ctx =>
             {
-                await ctx.Books.AddAsync(new Book
-                {
-                    Id = 1,
-                    Isbn = "1234567890",
-                    Author = "Author1",
-                    Count = 6,
-                    Description = "Book1's Description",
-                    Publish = "Publisher1",
-                    Title = "Book1"
-                });
+                await ctx.Books.AddAsync(Book1);
 
-                await ctx.Books.AddAsync(new Book
-                {
-                    Id = 2,
-                    Isbn = "1234567892",
-                    Author = "Author2",
-                    Count = 3,
-                    Description = "Book2's Description",
-                    Publish = "Publisher2",
-                    Title = "Book2"
-                });
+                await ctx.Books.AddAsync(Book2);
             });
         }
 
