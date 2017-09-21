@@ -13,6 +13,7 @@ using Library.BookManage;
 using Library.EntityFrameworkCore;
 using Library.EntityFrameworkCore.Seed.Host;
 using Library.EntityFrameworkCore.Seed.Tenants;
+using Library.LibraryService;
 using Library.MultiTenancy;
 using Library.Users;
 using Library.Users.Dto;
@@ -269,6 +270,25 @@ namespace Library.Tests
             return await UsingDbContextAsync(async ctx =>
             {
                 return await ctx.Users.FirstOrDefaultAsync(item => item.UserName == "john.nash");
+            });
+        }
+
+        protected async Task<BorrowRecord> InjectBorrowRecord1AndGetAsync(int renewTime)
+        {
+            return await UsingDbContextAsync(async ctx =>
+            {
+                var record = new BorrowRecord
+                {
+                    BookId = Book1.Id,
+                    BorrowerUserId = (await FindJohnAsync()).Id,
+                    CreationTime = new DateTime(),
+                    CreatorUserId = 1,
+                    RenewTime = renewTime
+                };
+
+                await ctx.BorrowRecords.AddAsync(record);
+
+                return record;
             });
         }
 
