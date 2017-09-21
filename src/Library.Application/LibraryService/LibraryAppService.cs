@@ -25,6 +25,22 @@ namespace Library.LibraryService
             _bookInfoManager = bookInfoManager;
         }
 
+        public async Task<BookWithStatusAndMine> GetBook(GetBookInput input)
+        {
+            var book = await _bookRepository.FirstOrDefaultAsync(input.BookId);
+            if (book == null)
+                throw new UserFriendlyException($"There is no book with id = {input.BookId}");
+
+            if (AbpSession.UserId.HasValue)
+            {
+                return await GetBookWithUserStatusItemAsync(book, AbpSession.UserId.Value);
+            }
+            else
+            {
+                return await GetBookWithNoUserStatus(book);
+            }
+        }
+
         [AbpAuthorize]
         public async Task RenewBook(RenewBookInput input)
         {
@@ -42,6 +58,7 @@ namespace Library.LibraryService
             ++record.RenewTime;
         }
 
+        [AbpAuthorize]
         public async Task<ListResultDto<BookWithStatusAndMine>> GetUserBook()
         {
             var borrowedList = await _borrowRecordRepository.GetAll()
