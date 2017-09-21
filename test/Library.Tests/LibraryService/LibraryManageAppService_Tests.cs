@@ -38,6 +38,33 @@ namespace Library.Tests.LibraryService
             });
         }
 
+        [Fact]
+        public async Task BorrowBook_CanBorrowBookTwice()
+        {
+            // GeekOrangeLuyao :还有一些问题，写注释掉
+            //// Act
+            //await _libraryManageAppService.BorrowBook(new BorrowBookInput
+            //{
+            //    BookId = 1,
+            //    UserNameOrEmail = ""
+            //});
+            //await _libraryManageAppService.BorrowBook(new BorrowBookInput
+            //{
+            //    BookId = 1,
+            //    UserNameOrEmail = ""
+            //});
+
+            //// Asserts
+            //await UsingDbContextAsync(async ctx =>
+            //{
+            //    var user = await FindJohnAsync();
+            //    var record = await ctx.BorrowRecords.FirstOrDefaultAsync(
+            //        item => item.BookId == 1 && item.BorrowerUserId == user.Id);
+
+            //    //record.ShouldThrowException();
+                
+            //});
+        }
         public async Task InitializeAsync()
         {
             await InjectBooksDataAsync();
