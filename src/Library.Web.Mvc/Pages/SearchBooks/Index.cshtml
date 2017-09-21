@@ -2,21 +2,73 @@
 
 @using Abp.Application.Services.Dto;
 @using Library.Sessions
+@using Library.BookManage
+@using Library.BookManage.Dto
 @using Library.Web.Startup
+@using Library.LibraryService
 
-@inject ISessionAppService SessionAppService;
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@inject ISessionAppService SessionAppService
+@inject IBookAppService BookAppService
+@inject ILibraryAppService LibraryAppService
+@inject ILibraryManageAppService LibraryManageAppService
+
 @{
     ViewBag.CurrentPageName = PageNames.SearchBooks;
 }
+@functions
+{
+    //State是图书借阅状态，Date是应还的日期
+    //public async Task<IActionResult> OnPostAsync(long bookId, string title, string State, string author, string publish, string Date)
+    //{
+    //    var dto = new BookDto()
+    //    {
+    //        Title = title,
+    //        State = State,
+    //        Date = Date,
+    //        Publish = publish,
+    //        Author = author,
+    //    };
+
+    //    if (bookId == 0)
+    //    {
+    //        await BookAppService.Create(dto);
+    //    }
+    //    else
+    //    {
+    //        dto.Id = bookId;
+    //        await BookAppService.Update(dto);
+    //    }
+
+    //    return new RedirectToRouteResult(null);
+    //}
+}
+@section scripts
+    {
+    <script src="~/view-resources/Pages/BookManage/Index.js" asp-append-version="true"></script>
+
+    <script>
+        $(function () {
+            $("#table").DataTable({
+                responsive: true,
+                columns: [
+                    null,
+                    null,
+                    null,
+                    null, // 第六列和第七列禁止排序和筛选
+                    { orderable: false, searchable: false },
+                    { orderable: false, searchable: false }
+                ]
+            });
+        });
+    </script>
+}
+
 <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
             <div class="header">
                 <h2>
-                    Searching Book
+                    Search Book
                 </h2>
                 <ul class="header-dropdown m-r--5">
                     <li class="dropdown">
@@ -29,39 +81,53 @@
                     </li>
                 </ul>
             </div>
-            <br />
-            <br />
-            <div class="body table-responsive" style="padding-left:250px;height:190px">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <div class="form-line">
-                            <input type="text" class="form-control" placeholder="INPUT">
-                        </div>
-                    </div>
-                </div>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Book Name<span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a href="javascript:void(0);">Book Name</a></li>
-                        <li><a href="javascript:void(0);">Author Name</a></li>
-                        <li><a href="javascript:void(0);">Publishing House</a></li>
-                        <li><a href="javascript:void(0);">ISBN</a></li>
-                    </ul>
-                </div>
-                <button type="button" class="btn bg-blue waves-effect waves-light center" data-toggle="modal" data-target="#UserSearchModal">SEARCH</button>
+            <div class="body table-responsive">
+                <table class="table" id="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Publish</th>
+                            <th>State</th>
+                            <th>Return Time</th>
+                            <th>Detail</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var res = await Model.LibraryAppService.GetBookList();
+                            //var res = await Model.BookAppService.GetAll(new PagedAndSortedResultRequestDto());
+                        }
+                        @foreach (var item in res.Items)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.Author</td>
+                                <td>@item.Publish</td>
+                                @{ 
+                                    if (item.Borrowed == true)
+                                    {
+                                        <td>Unavailable now</td>
+                                    }
+                                    else
+                                    {
+                                        <td>Available</td>
+                                    }
+                                }
+                                <td>@item.BorrowTimeLimit</td>
+                                <td><button type="button" class="btn bg-blue waves-effect waves-light center" data-toggle="modal" data-target="#UserSearchModal" >details</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
-            <br />
-            <br />
-            <br />
-            <br />
         </div>
     </div>
 </div>
 
 
 
+<!--加上这里的部分-->
 <div class="modal fade" id="UserSearchModal" tabindex="-1" role="dialog" aria-labelledby="UserSearchModalLabel" data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -70,36 +136,51 @@
                     <span>Searching Result</span>
                 </h4>
             </div>
-
             <div class="modal-body">
                 <div class="row clearfix">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="card">
-
                             <div class="body table-responsive">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>BookName</th>
-                                            <th>AuthorNAME</th>
-                                            <th>PublishingHouse</th>
-                                            <th>ISBN</th>
-                                            <th>IsLeading)</th>
-                                        </tr>
-                                    </thead>
-
+                                <table class="table">
+                                    <!--接收bookid并添加该bookid的相关属性-->
                                     <tbody>
+                                        @{ 
+                                                
+                                        }
+
                                         <tr>
-                                            <th scope="row">1</th>
-                                            <td>人性的弱点</td>
-                                            <td>戴尔·卡耐基</td>
-                                            <td>台海出版社</td>
-                                            <td>9787516805060</td>
-                                            <td>Y</td>
+                                            <th scope="row">Title</th>
+                                            <td>11</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Author</th>
+                                            <td>22</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Publish</th>
+                                            <td>33</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">ISBN</th>
+                                            <td>44</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Count</th>
+                                            <td>55</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">State</th>
+                                            <td>66</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Recevice Date</th>
+                                            <td>77</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Description</th>
+                                            <td>88</td>
                                         </tr>
                                     </tbody>
-
                                 </table>
                             </div>
                         </div>
@@ -109,11 +190,11 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
             </div>
-
         </div>
     </div>
 </div>
-<div class="modal fade" id="UserEditModal" tabindex="-1" role="dialog" aria-labelledby="UserEditModalLabel" data-backdrop="static">
+
+<div class="modal fade" id="UserModal" tabindex="-1" role="dialog" aria-labelledby="UserModalLabel" data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         </div>
