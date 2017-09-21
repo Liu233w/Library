@@ -100,7 +100,7 @@ namespace Library.LibraryService
 
         private async Task<BookWithStatus> GetBookWithStatusFromBookAsync(Book book)
         {
-            var res = book.MapTo<BookWithStatus>();
+            var res = ObjectMapper.Map<BookWithStatus>(book);
             res.Avaliable = await _bookInfoManager.GetAvailableAsync(book);
             return res;
         }
@@ -109,13 +109,13 @@ namespace Library.LibraryService
         {
             var t = await GetBookWithStatusFromBookAsync(book);
             // bool 的默认值是 false，因此默认就是没有借书
-            return t.MapTo<BookWithStatusAndMine>();
+            return ObjectMapper.Map<BookWithStatusAndMine>(t);
         }
 
         private async Task<BookWithStatusAndMine> GetBookWithUserStatusItemAsync(Book book, long userId)
         {
             var bookWithStatus = await GetBookWithStatusFromBookAsync(book);
-            var res = bookWithStatus.MapTo<BookWithStatusAndMine>();
+            var res = ObjectMapper.Map<BookWithStatusAndMine>(bookWithStatus);
 
             var record = await _bookInfoManager.GetUserRecordOrNullAsync(userId, res.Id);
             if (record == null)

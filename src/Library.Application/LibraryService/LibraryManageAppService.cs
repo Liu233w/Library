@@ -40,9 +40,9 @@ namespace Library.LibraryService
                 var user = await UserManager.GetUserByIdAsync(record.BorrowerUserId);
                 records.Add(new BookUserState
                 {
-                    User = user.MapTo<UserDto>(),
+                    User = ObjectMapper.Map<UserDto>(user),
                     BorrowTimeLimit = record.CreationTime + LibraryConsts.UserMaxBorrowDuration,
-                    Record = record.MapTo<BorrowRecordDto>()
+                    Record = ObjectMapper.Map<BorrowRecordDto>(record)
                 });
             }
             return new BookWithStatusAndRecord
@@ -108,10 +108,10 @@ namespace Library.LibraryService
         {
             await _bookInfoManager.LoadBookFromRecordAsync(record);
 
-            var res = record.MapTo<BorrowRecordWithAdditionalInfo>();
+            var res = ObjectMapper.Map<BorrowRecordWithAdditionalInfo>(record);
 
             var user = UserManager.GetUserByIdAsync(record.BorrowerUserId);
-            res.UserInfo = user.MapTo<UserDto>();
+            res.UserInfo = ObjectMapper.Map<UserDto>(user);
 
             return res;
         }

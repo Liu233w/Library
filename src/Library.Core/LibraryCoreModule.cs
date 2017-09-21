@@ -1,4 +1,5 @@
-﻿using Abp.Modules;
+﻿using Abp.AutoMapper;
+using Abp.Modules;
 using Abp.Reflection.Extensions;
 using Abp.Timing;
 using Abp.Zero;
@@ -12,7 +13,9 @@ using Library.Timing;
 
 namespace Library
 {
-    [DependsOn(typeof(AbpZeroCoreModule))]
+    [DependsOn(
+        typeof(AbpZeroCoreModule),
+        typeof(AbpAutoMapperModule))]
     public class LibraryCoreModule : AbpModule
     {
         public override void PreInitialize()
@@ -33,6 +36,9 @@ namespace Library
             AppRoleConfig.Configure(Configuration.Modules.Zero().RoleManagement);
 
             Configuration.Settings.Providers.Add<AppSettingProvider>();
+
+            //Auto Mapper
+            Configuration.Modules.AbpAutoMapper().UseStaticMapper = false;
         }
 
         public override void Initialize()
