@@ -21,14 +21,17 @@ namespace Library.BookManage.Dto
 
         public void AddValidationErrors(CustomValidationContext context)
         {
-            if (!Isbn.Length.IsIn(10, 13))
+            if (!Isbn.IsNullOrEmpty())
             {
-                context.Results.Add(new ValidationResult("The length of ISBN must be 10 or 13"));
-            }
+                if (!Isbn.Length.IsIn(10, 13))
+                {
+                    context.Results.Add(new ValidationResult("The length of ISBN must be 10 or 13"));
+                }
 
-            if (Isbn.Any(letter => !letter.IsIn('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')))
-            {
-                context.Results.Add(new ValidationResult("ISBN must be numbers"));
+                if (Isbn.Any(letter => !letter.IsIn('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')))
+                {
+                    context.Results.Add(new ValidationResult("ISBN must be numbers"));
+                }
             }
 
             if (Count <= 0)
