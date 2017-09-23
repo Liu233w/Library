@@ -59,14 +59,11 @@ namespace Library.Web.Startup
         {
             app.UseAbp(); //Initializes ABP framework.
 
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-            }
+#if DEBUG
+            app.UseDeveloperExceptionPage();
+#else
+            app.UseExceptionHandler("/Error");
+#endif
 
             app.UseStaticFiles();
 
