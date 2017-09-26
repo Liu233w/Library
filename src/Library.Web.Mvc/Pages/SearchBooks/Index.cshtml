@@ -1,50 +1,25 @@
-﻿@page
-
-@using Abp.Application.Services.Dto;
-@using Library.Sessions
-@using Library.BookManage
+﻿@page 
+@using Abp.Application.Services.Dto; 
+@using Library.Sessions 
+@using Library.BookManage 
 @using Library.BookManage.Dto
-@using Library.Web.Startup
-@using Library.LibraryService
+@using Library.Web.Startup 
+@using Library.LibraryService 
 
-@inject ISessionAppService SessionAppService
-@inject IBookAppService BookAppService
-@inject ILibraryAppService LibraryAppService
-@inject ILibraryManageAppService LibraryManageAppService
+@inject ISessionAppService SessionAppService 
+@inject IBookAppService BookAppService 
+@inject ILibraryAppService LibraryAppService 
+@inject ILibraryManageAppService LibraryManageAppService 
+@{ 
+    ViewBag.CurrentPageName = PageNames.SearchBooks; 
+} 
+@functions 
+{ 
 
-@{
-    ViewBag.CurrentPageName = PageNames.SearchBooks;
-}
-@functions
+} 
+@section scripts 
 {
-    //State是图书借阅状态，Date是应还的日期
-    //public async Task<IActionResult> OnPostAsync(long bookId, string title, string State, string author, string publish, string Date)
-    //{
-    //    var dto = new BookDto()
-    //    {
-    //        Title = title,
-    //        State = State,
-    //        Date = Date,
-    //        Publish = publish,
-    //        Author = author,
-    //    };
-
-    //    if (bookId == 0)
-    //    {
-    //        await BookAppService.Create(dto);
-    //    }
-    //    else
-    //    {
-    //        dto.Id = bookId;
-    //        await BookAppService.Update(dto);
-    //    }
-
-    //    return new RedirectToRouteResult(null);
-    //}
-}
-@section scripts
-    {
-    <script src="~/view-resources/Pages/BookManage/Index.js" asp-append-version="true"></script>
+    <script src="~/view-resources/Pages/SearchBook/Index.js" asp-append-version="true"></script>
 
     <script>
         $(function () {
@@ -55,8 +30,14 @@
                     null,
                     null,
                     null, // 第六列和第七列禁止排序和筛选
-                    { orderable: false, searchable: false },
-                    { orderable: false, searchable: false }
+                    {
+                        orderable: false,
+                        searchable: false
+                    },
+                    {
+                        orderable: false,
+                        searchable: false
+                    }
                 ]
             });
         });
@@ -94,29 +75,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @{
-                            var res = await Model.LibraryAppService.GetBookList();
-                            //var res = await Model.BookAppService.GetAll(new PagedAndSortedResultRequestDto());
-                        }
-                        @foreach (var item in res.Items)
-                        {
-                            <tr>
-                                <td>@item.Title</td>
-                                <td>@item.Author</td>
-                                <td>@item.Publish</td>
-                                @{ 
-                                    if (item.Borrowed == true)
-                                    {
-                                        <td>Unavailable now</td>
-                                    }
-                                    else
-                                    {
-                                        <td>Available</td>
-                                    }
-                                }
-                                <td>@item.BorrowTimeLimit</td>
-                                <td><button type="button" class="btn bg-blue waves-effect waves-light center" data-toggle="modal" data-target="#UserSearchModal" >details</button></td>
-                            </tr>
+                        @{ var res = await Model.LibraryAppService.GetBookList(); //var res = await Model.BookAppService.GetAll(new PagedAndSortedResultRequestDto());
+                        } @foreach (var item in res.Items) {
+                        <tr>
+                            <td>@item.Title</td>
+                            <td>@item.Author</td>
+                            <td>@item.Publish</td>
+                            @{ if (item.Borrowed == true) {
+                            <td>Unavailable now</td>
+                            } else {
+                            <td>Available</td>
+                            } }
+                            <td>@item.BorrowTimeLimit</td>
+                            <td><button type="button" class="btn bg-blue waves-effect waves-light center show-bookdetail" data-toggle="modal"
+                                    data-target="#BookDetail" data-book-id="@item.Id">details</button></td>
+                        </tr>
                         }
                     </tbody>
                 </table>
@@ -125,76 +98,7 @@
     </div>
 </div>
 
-
-
-<!--加上这里的部分-->
-<div class="modal fade" id="UserSearchModal" tabindex="-1" role="dialog" aria-labelledby="UserSearchModalLabel" data-backdrop="static">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">
-                    <span>Searching Result</span>
-                </h4>
-            </div>
-            <div class="modal-body">
-                <div class="row clearfix">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <div class="card">
-                            <div class="body table-responsive">
-                                <table class="table">
-                                    <!--接收bookid并添加该bookid的相关属性-->
-                                    <tbody>
-                                        @{ 
-                                                
-                                        }
-
-                                        <tr>
-                                            <th scope="row">Title</th>
-                                            <td>11</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Author</th>
-                                            <td>22</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Publish</th>
-                                            <td>33</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">ISBN</th>
-                                            <td>44</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Count</th>
-                                            <td>55</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">State</th>
-                                            <td>66</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Recevice Date</th>
-                                            <td>77</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Description</th>
-                                            <td>88</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="UserModal" tabindex="-1" role="dialog" aria-labelledby="UserModalLabel" data-backdrop="static">
+<div class="modal fade" id="BookDetail" tabindex="-1" role="dialog" aria-labelledby="" data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         </div>
