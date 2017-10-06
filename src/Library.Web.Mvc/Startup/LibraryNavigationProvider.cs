@@ -44,14 +44,6 @@ namespace Library.Web.Startup
                         icon: "local_offer",
                         requiredPermissionName: PermissionNames.Pages_Roles
                     )
-                )
-                .AddItem(
-                    new MenuItemDefinition(
-                        PageNames.About,
-                        L("About"),
-                        url: "About",
-                        icon: "info"
-                    )
                 ).AddItem(
                     new MenuItemDefinition(
                         PageNames.BookManage,
@@ -66,6 +58,14 @@ namespace Library.Web.Startup
                         url: "SearchBooks",
                         icon: "view_list"
                         )
+#if DEBUG
+               ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.About,
+                        L("About"),
+                        url: "About",
+                        icon: "info"
+                    )
                ).AddItem( //Menu items below is just for demonstration!
                     new MenuItemDefinition(
                         "MultiLevelMenu",
@@ -142,6 +142,7 @@ namespace Library.Web.Startup
                             )
                         )
                     )
+#endif
                 );
         }
 
