@@ -89,6 +89,62 @@ namespace Library.EntityFrameworkCore.Seed.Tenants
                     _context.SaveChanges();
                 }
             }
+
+            // Library roles
+
+            var libraryManagerRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.LibraryManager);
+            if (libraryManagerRole == null)
+            {
+                libraryManagerRole = _context.Roles.Add(
+                    new Role(_tenantId, StaticRoleNames.Tenants.LibraryManager, StaticRoleNames.Tenants.LibraryManager)
+                    {
+                        IsStatic = true,
+                        IsDefault = false
+                    }).Entity;
+
+                _context.SaveChanges();
+
+                _context.Permissions.Add(
+                    new RolePermissionSetting
+                    {
+                        TenantId = _tenantId,
+                        Name = PermissionNames.Pages_BookManage,
+                        IsGranted = true,
+                        RoleId = libraryManagerRole.Id
+                    });
+
+                _context.Permissions.Add(
+                    new RolePermissionSetting
+                    {
+                        TenantId = _tenantId,
+                        Name = PermissionNames.Pages_LibraryManage,
+                        IsGranted = true,
+                        RoleId = libraryManagerRole.Id
+                    });
+            }
+
+            var readerRole = _context.Roles.IgnoreQueryFilters().FirstOrDefault(r => r.TenantId == _tenantId && r.Name == StaticRoleNames.Tenants.Reader);
+            if (readerRole == null)
+            {
+                readerRole = _context.Roles.Add(
+                    new Role(_tenantId, StaticRoleNames.Tenants.Reader, StaticRoleNames.Tenants.Reader)
+                    {
+                        IsStatic = true,
+                        IsDefault = false
+                    }).Entity;
+
+                _context.SaveChanges();
+
+                _context.Permissions.Add(
+                    new RolePermissionSetting
+                    {
+                        TenantId = _tenantId,
+                        Name = PermissionNames.Pages_Library,
+                        IsGranted = true,
+                        RoleId = readerRole.Id
+                    });
+            }
+
         }
     }
 }
