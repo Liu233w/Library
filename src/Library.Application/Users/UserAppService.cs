@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using Abp.Authorization;
 using Abp.Authorization.Users;
+using Abp.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Abp.IdentityFramework;
 using Library.Authorization.Roles;
@@ -89,6 +90,14 @@ namespace Library.Users
         {
             var roles = await _roleRepository.GetAllListAsync();
             return new ListResultDto<RoleDto>(ObjectMapper.Map<List<RoleDto>>(roles));
+        }
+
+        public async Task MarkUserAsLibraryManagerByUserNameOrEmail(UserNameOrEmailInput input)
+        {
+            var user = await _userManager.FindByNameOrEmailAsync(
+                input.UserName.IsNullOrEmpty() ? input.Email : input.UserName);
+
+            await _userManager.AddToRoleAsync(user, StaticRoleNames.Tenants.LibraryManager);
         }
 
         protected override User MapToEntity(CreateUserDto createInput)

@@ -9,5 +9,7 @@ namespace Library.Users
     public interface IUserAppService : IAsyncCrudAppService<UserDto, long, PagedResultRequestDto, CreateUserDto, UserDto>
     {
         Task<ListResultDto<RoleDto>> GetRoles();
+
+        Task MarkUserAsLibraryManagerByUserNameOrEmail(UserNameOrEmailInput input);
     }
 }
