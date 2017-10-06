@@ -6,6 +6,7 @@ using Abp.Authorization;
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using Abp.UI;
+using Library.Authorization;
 using Library.BookManage;
 using Library.LibraryService.Dto;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +42,7 @@ namespace Library.LibraryService
             }
         }
 
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Pages_Library)]
         public async Task RenewBook(RenewBookInput input)
         {
             var record = await _bookInfoManager.FindRecordOrNullAsync(input.BookId, AbpSession.UserId.Value);
@@ -58,7 +59,7 @@ namespace Library.LibraryService
             ++record.RenewTime;
         }
 
-        [AbpAuthorize]
+        [AbpAuthorize(PermissionNames.Pages_Library)]
         public async Task<ListResultDto<BookWithStatusAndMine>> GetUserBook()
         {
             var borrowedList = await _borrowRecordRepository.GetAll()

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abp.Authorization;
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
 using Abp.UI;
+using Library.Authorization;
 using Library.Authorization.Users;
 using Library.BookManage;
 using Library.LibraryService.Dto;
@@ -13,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Library.LibraryService
 {
+    [AbpAuthorize(PermissionNames.Pages_LibraryManage)]
     public class LibraryManageAppService : LibraryAppServiceBase, ILibraryManageAppService
     {
         private readonly IRepository<Book, long> _bookRepository;
