@@ -22,6 +22,19 @@ namespace Library.Authorization.Roles
                     StaticRoleNames.Tenants.Admin,
                     MultiTenancySides.Tenant)
                 );
+
+            roleManagementConfig.StaticRoles.Add(
+                new StaticRoleDefinition(
+                    StaticRoleNames.Tenants.LibraryManager,
+                    MultiTenancySides.Tenant)
+                );
+
+            roleManagementConfig.StaticRoles.Add(
+                new StaticRoleDefinition(
+                    StaticRoleNames.Tenants.Reader,
+                    MultiTenancySides.Tenant)
+                );
+
         }
     }
 }

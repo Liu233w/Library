@@ -10,6 +10,10 @@ namespace Library.Authorization.Roles
         public static class Tenants
         {
             public const string Admin = "Admin";
+
+            public const string LibraryManager = "LibraryManager";
+
+            public const string Reader = "Reader";
         }
     }
 }

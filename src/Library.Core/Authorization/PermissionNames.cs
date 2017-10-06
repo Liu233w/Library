@@ -9,5 +9,9 @@
         public const string Pages_Roles = "Pages.Roles";
 
         public const string Pages_BookManage = "Pages.BookManage";
+
+        public const string Pages_LibraryManage = "Pages.LibraryManage";
+
+        public const string Pages_Library = "Pages.Library";
     }
 }

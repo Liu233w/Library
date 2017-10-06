@@ -13,6 +13,8 @@ namespace Library.Authorization
             context.CreatePermission(PermissionNames.Pages_Tenants, L("Tenants"), multiTenancySides: MultiTenancySides.Host);
 
             context.CreatePermission(PermissionNames.Pages_BookManage);
+            context.CreatePermission(PermissionNames.Pages_LibraryManage);
+            context.CreatePermission(PermissionNames.Pages_Library);
         }
 
         private static ILocalizableString L(string name)
