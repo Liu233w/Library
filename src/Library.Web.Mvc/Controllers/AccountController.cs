@@ -20,6 +20,7 @@ using Abp.Web.Models;
 using Abp.Zero.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Library.Authorization;
+using Library.Authorization.Roles;
 using Library.MultiTenancy;
 using Library.Web.Models.Account;
 using Library.Authorization.Users;
@@ -213,6 +214,8 @@ namespace Library.Web.Controllers
                 }
 
                 await _unitOfWorkManager.Current.SaveChangesAsync();
+
+                await _userManager.AddToRoleAsync(user, StaticRoleNames.Tenants.Reader);
 
                 Debug.Assert(user.TenantId != null);
 
