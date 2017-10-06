@@ -49,14 +49,16 @@ namespace Library.Web.Startup
                         PageNames.BookManage,
                         L("BookManage"),
                         url: "BookManage",
-                        icon: "description"
+                        icon: "description",
+                        requiredPermissionName: PermissionNames.Pages_BookManage
                         )
                 ).AddItem(
                     new MenuItemDefinition(
                         PageNames.SearchBooks,
                         L("SearchBooks"),
                         url: "SearchBooks",
-                        icon: "view_list"
+                        icon: "view_list",
+                        requiredPermissionName: PermissionNames.Pages_Library
                         )
 #if DEBUG
                ).AddItem(
