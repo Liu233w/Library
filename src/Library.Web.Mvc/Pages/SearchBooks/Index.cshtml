@@ -72,6 +72,7 @@
                             <th>State</th>
                             <th>Return Time</th>
                             <th>Detail</th>
+                            <th>Reserve</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,6 +90,13 @@
                             <td>@item.BorrowTimeLimit</td>
                             <td><button type="button" class="btn bg-blue waves-effect waves-light center show-bookdetail" data-toggle="modal"
                                     data-target="#BookDetail" data-book-id="@item.Id">details</button></td>
+                            <td>
+                                <button type="button" class="btn bg-blue waves-effect waves-light center show-bookreserve" data-toggle="modal"
+                                        data-target="#BookReserve" data-book-id="@item.Id">
+                                    reserve
+                                </button>
+                            </td>
+
                         </tr>
                         }
                     </tbody>
@@ -99,6 +107,12 @@
 </div>
 
 <div class="modal fade" id="BookDetail" tabindex="-1" role="dialog" aria-labelledby="" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="BookReserve" tabindex="-1" role="dialog" aria-labelledby="" data-backdrop="static">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
         </div>
