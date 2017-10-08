@@ -88,7 +88,7 @@ namespace Library.LibraryService
         }
 
         [AbpAuthorize]
-        public async Task<ListResultDto<MyNotificationDto>> GetMyNotifications(GetMyNotificationsInput input)
+        public async Task<ListResultDto<BroadcastUserNotificationDto>> GetMyNotifications(GetMyNotificationsInput input)
         {
             var notifications = await _userNotificationManager.GetUserNotificationsAsync(
                 new UserIdentifier(AbpSession.TenantId, AbpSession.UserId.Value), 
@@ -98,7 +98,7 @@ namespace Library.LibraryService
             {
                 var noti = item.Notification;
                 var notiData = noti.Data as BroadcastNotificationData;
-                return new MyNotificationDto()
+                return new BroadcastUserNotificationDto()
                 {
                     UserNotificationId = item.Id,
                     State = item.State,
@@ -108,7 +108,7 @@ namespace Library.LibraryService
                 };
             });
 
-            return new ListResultDto<MyNotificationDto>(res);
+            return new ListResultDto<BroadcastUserNotificationDto>(res);
         }
 
         public async Task MarkNotificationAsRead(MarkNotificationAsReadInput input)

@@ -3,7 +3,10 @@ using Abp.Notifications;
 
 namespace Library.LibraryService.Dto
 {
-    public class MyNotificationDto
+    /// <summary>
+    /// 通知对用户的映射
+    /// </summary>
+    public class BroadcastUserNotificationDto
     {
         public Guid UserNotificationId { get; set; }
 

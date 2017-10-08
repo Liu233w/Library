@@ -37,7 +37,7 @@ namespace Library.LibraryService
         /// 获取当前用户的通知，可以指定通知类型
         /// </summary>
         /// <returns></returns>
-        Task<ListResultDto<MyNotificationDto>> GetMyNotifications(GetMyNotificationsInput input);
+        Task<ListResultDto<BroadcastUserNotificationDto>> GetMyNotifications(GetMyNotificationsInput input);
 
         /// <summary>
         /// 将某通知标记为已读
