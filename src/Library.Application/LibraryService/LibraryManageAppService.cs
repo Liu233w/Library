@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
@@ -24,13 +25,17 @@ namespace Library.LibraryService
         private readonly IRepository<BorrowRecord, long> _borrowedRecordRepository;
         private readonly BookInfoManager _bookInfoManager;
         private readonly INotificationPublisher _notificationPublisher;
+        private readonly IRepository<TenantNotificationInfo, Guid> _tenantNotificationRepository;
+        private readonly IRepository<UserNotificationInfo, Guid> _userNotificationRepository;
 
-        public LibraryManageAppService(IRepository<Book, long> bookRepository, BookInfoManager bookInfoManager, IRepository<BorrowRecord, long> borrowedRecordRepository, INotificationPublisher notificationPublisher)
+        public LibraryManageAppService(IRepository<Book, long> bookRepository, BookInfoManager bookInfoManager, IRepository<BorrowRecord, long> borrowedRecordRepository, INotificationPublisher notificationPublisher, IRepository<TenantNotificationInfo, Guid> tenantNotificationRepository, IRepository<UserNotificationInfo, Guid> userNotificationRepository)
         {
             _bookRepository = bookRepository;
             _bookInfoManager = bookInfoManager;
             _borrowedRecordRepository = borrowedRecordRepository;
             _notificationPublisher = notificationPublisher;
+            _tenantNotificationRepository = tenantNotificationRepository;
+            _userNotificationRepository = userNotificationRepository;
         }
 
         public async Task<BookWithStatusAndRecord> GetBookStatus(GetBookStatusInput input)
@@ -117,6 +122,43 @@ namespace Library.LibraryService
 
             await _notificationPublisher.PublishAsync(NotificationType.BroadcastNotification,
                 new BroadcastNotificationData(input.Content, user.FullName));
+        }
+
+        public async Task<ListResultDto<BroadcastNotificationDto>> GetNotificationList()
+        {
+            var res = await _tenantNotificationRepository.GetAll()
+                .Where(item => item.NotificationName == NotificationType.BroadcastNotification)
+                .ToListAsync();
+
+            return new ListResultDto<BroadcastNotificationDto>(
+                res.Map(item =>
+                {
+                    var notification =item.ToTenantNotification();
+                    var data = notification.Data as BroadcastNotificationData;
+                    return new BroadcastNotificationDto()
+                    {
+                        Content = data.Content,
+                        Publisher = data.Publisher,
+                        PublishTime = notification.CreationTime,
+                        NotificationId = notification.Id
+                    };
+                }));
+        }
+
+        public async Task DeleteNotification(DeleteNotificationInput input)
+        {
+            var notification = await _tenantNotificationRepository.GetAsync(input.NotificationId);
+
+            if (notification.NotificationName != NotificationType.BroadcastNotification)
+            {
+                throw new UserFriendlyException("Notification is not exist", 
+                    new Exception("Try to delete a notification that is not a BroadcastNotification"));
+            }
+
+            await _userNotificationRepository.DeleteAsync(
+                item => item.TenantNotificationId == notification.Id);
+
+            await _tenantNotificationRepository.DeleteAsync(notification);
         }
 
         private async Task<BorrowRecordWithAdditionalInfo> GetOutputRecord(BorrowRecord record)

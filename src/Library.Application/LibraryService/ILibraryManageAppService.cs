@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Abp.Application.Services.Dto;
 using Library.LibraryService.Dto;
 
 namespace Library.LibraryService
@@ -43,5 +44,18 @@ namespace Library.LibraryService
         /// <param name="input"></param>
         /// <returns></returns>
         Task PublishNotification(PublishNotificationInput input);
+
+        /// <summary>
+        /// 获取通知列表
+        /// </summary>
+        /// <returns></returns>
+        Task<ListResultDto<BroadcastNotificationDto>> GetNotificationList();
+
+        /// <summary>
+        /// 删除通知
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task DeleteNotification(DeleteNotificationInput input);
     }
 }
