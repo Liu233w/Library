@@ -26,6 +26,7 @@ using Library.Web.Models.Account;
 using Library.Authorization.Users;
 using Library.Controllers;
 using Library.Identity;
+using Library.Notification;
 using Library.Sessions;
 using Library.Web.Views.Shared.Components.TenantChange;
 using Microsoft.AspNetCore.Authentication;
@@ -46,6 +47,7 @@ namespace Library.Web.Controllers
         private readonly ISessionAppService _sessionAppService;
         private readonly ITenantCache _tenantCache;
         private readonly INotificationPublisher _notificationPublisher;
+        private readonly INotificationSubscriptionManager _notificationSubscriptionManager;
 
         public AccountController(
             UserManager userManager,
@@ -58,7 +60,7 @@ namespace Library.Web.Controllers
             UserRegistrationManager userRegistrationManager,
             ISessionAppService sessionAppService,
             ITenantCache tenantCache,
-            INotificationPublisher notificationPublisher)
+            INotificationPublisher notificationPublisher, INotificationSubscriptionManager notificationSubscriptionManager)
         {
             _userManager = userManager;
             _multiTenancyConfig = multiTenancyConfig;
@@ -71,6 +73,7 @@ namespace Library.Web.Controllers
             _sessionAppService = sessionAppService;
             _tenantCache = tenantCache;
             _notificationPublisher = notificationPublisher;
+            _notificationSubscriptionManager = notificationSubscriptionManager;
         }
 
         #region Login / Logout
@@ -216,6 +219,9 @@ namespace Library.Web.Controllers
                 await _unitOfWorkManager.Current.SaveChangesAsync();
 
                 await _userManager.AddToRoleAsync(user, StaticRoleNames.Tenants.Reader);
+
+                await _notificationSubscriptionManager.SubscribeAsync(
+                    new UserIdentifier(AbpSession.TenantId, user.Id), NotificationType.BroadcastNotification);
 
                 Debug.Assert(user.TenantId != null);
 
