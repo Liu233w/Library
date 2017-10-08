@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Abp.Authorization;
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
+using Abp.Notifications;
 using Abp.UI;
 using Library.Authorization;
 using Library.Authorization.Users;
 using Library.BookManage;
 using Library.LibraryService.Dto;
+using Library.Notification;
 using Library.Users.Dto;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,12 +23,14 @@ namespace Library.LibraryService
         private readonly IRepository<Book, long> _bookRepository;
         private readonly IRepository<BorrowRecord, long> _borrowedRecordRepository;
         private readonly BookInfoManager _bookInfoManager;
+        private readonly INotificationPublisher _notificationPublisher;
 
-        public LibraryManageAppService(IRepository<Book, long> bookRepository, BookInfoManager bookInfoManager, IRepository<BorrowRecord, long> borrowedRecordRepository)
+        public LibraryManageAppService(IRepository<Book, long> bookRepository, BookInfoManager bookInfoManager, IRepository<BorrowRecord, long> borrowedRecordRepository, INotificationPublisher notificationPublisher)
         {
             _bookRepository = bookRepository;
             _bookInfoManager = bookInfoManager;
             _borrowedRecordRepository = borrowedRecordRepository;
+            _notificationPublisher = notificationPublisher;
         }
 
         public async Task<BookWithStatusAndRecord> GetBookStatus(GetBookStatusInput input)
@@ -105,6 +109,14 @@ namespace Library.LibraryService
             {
                 Items = await records.MapAsync(GetOutputRecord)
             };
+        }
+
+        public async Task PublishNotification(PublishNotificationInput input)
+        {
+            var user = await GetCurrentUserAsync();
+
+            await _notificationPublisher.PublishAsync(NotificationType.BroadcastNotification,
+                new BroadcastNotificationData(input.Content, user.FullName));
         }
 
         private async Task<BorrowRecordWithAdditionalInfo> GetOutputRecord(BorrowRecord record)

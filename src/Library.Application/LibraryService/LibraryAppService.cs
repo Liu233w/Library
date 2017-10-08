@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Abp;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
+using Abp.Notifications;
 using Abp.UI;
 using Library.Authorization;
 using Library.BookManage;
 using Library.LibraryService.Dto;
+using Library.Notification;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.LibraryService
@@ -18,12 +22,14 @@ namespace Library.LibraryService
         private readonly IRepository<Book, long> _bookRepository;
         private readonly IRepository<BorrowRecord, long> _borrowRecordRepository;
         private readonly BookInfoManager _bookInfoManager;
+        private readonly IUserNotificationManager _userNotificationManager;
 
-        public LibraryAppService(IRepository<Book, long> bookRepository, IRepository<BorrowRecord, long> borrowRecordRepository, BookInfoManager bookInfoManager)
+        public LibraryAppService(IRepository<Book, long> bookRepository, IRepository<BorrowRecord, long> borrowRecordRepository, BookInfoManager bookInfoManager, IUserNotificationManager userNotificationManager)
         {
             _bookRepository = bookRepository;
             _borrowRecordRepository = borrowRecordRepository;
             _bookInfoManager = bookInfoManager;
+            _userNotificationManager = userNotificationManager;
         }
 
         public async Task<BookWithStatusAndMine> GetBook(GetBookInput input)
@@ -79,6 +85,58 @@ namespace Library.LibraryService
             }
 
             return new ListResultDto<BookWithStatusAndMine>(resList);
+        }
+
+        [AbpAuthorize]
+        public async Task<ListResultDto<MyNotificationDto>> GetMyNotifications(GetMyNotificationsInput input)
+        {
+            var notifications = await _userNotificationManager.GetUserNotificationsAsync(
+                new UserIdentifier(AbpSession.TenantId, AbpSession.UserId.Value), 
+                input.NotificationState);
+
+            var res = notifications.Map(item =>
+            {
+                var noti = item.Notification;
+                var notiData = noti.Data as BroadcastNotificationData;
+                return new MyNotificationDto()
+                {
+                    UserNotificationId = item.Id,
+                    State = item.State,
+                    Content = notiData.Content,
+                    Publisher = notiData.Publisher,
+                    PublishTime = noti.CreationTime
+                };
+            });
+
+            return new ListResultDto<MyNotificationDto>(res);
+        }
+
+        public async Task MarkNotificationAsRead(MarkNotificationAsReadInput input)
+        {
+            var noti = await _userNotificationManager.GetUserNotificationAsync(
+                AbpSession.TenantId, input.UserNotificationId);
+            if (noti.Notification.NotificationName != NotificationType.BroadcastNotification)
+            {
+                throw new UserFriendlyException("This Notification is not exist",
+                    new Exception("User try to mark a none-broadcastNotification as readed"));
+            }
+
+            await _userNotificationManager.UpdateUserNotificationStateAsync(AbpSession.TenantId,
+                input.UserNotificationId, UserNotificationState.Read);
+        }
+
+        [AbpAuthorize]
+        public async Task<GetNotificationCountOutput> GetNotificationCount()
+        {
+            var userIdentifier=new UserIdentifier(AbpSession.TenantId,AbpSession.UserId.Value);
+
+            return new GetNotificationCountOutput()
+            {
+                ReadedCount = await _userNotificationManager.GetUserNotificationCountAsync(
+                    userIdentifier, UserNotificationState.Read),
+                UnreadCount = await _userNotificationManager.GetUserNotificationCountAsync(
+                    userIdentifier, UserNotificationState.Unread)
+            };
         }
 
         public async Task<ListResultDto<BookWithStatusAndMine>> GetBookList()
