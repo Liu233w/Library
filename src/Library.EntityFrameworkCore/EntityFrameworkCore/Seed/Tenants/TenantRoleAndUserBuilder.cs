@@ -1,11 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Abp.Authorization;
 using Abp.Authorization.Roles;
 using Abp.Authorization.Users;
 using Abp.MultiTenancy;
+using Abp.Notifications;
 using Library.Authorization;
 using Library.Authorization.Roles;
 using Library.Authorization.Users;
+using Library.Notification;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
@@ -88,6 +91,10 @@ namespace Library.EntityFrameworkCore.Seed.Tenants
                     });
                     _context.SaveChanges();
                 }
+
+                // Subscribe Notifications
+                _context.NotificationSubscriptions.Add(new NotificationSubscriptionInfo(
+                    Guid.NewGuid(), _tenantId, adminUser.Id, NotificationType.BroadcastNotification));
             }
 
             // Library roles
