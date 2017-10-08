@@ -22,5 +22,15 @@ namespace Library
             return record.CreationTime + LibraryConsts.UserMaxBorrowDuration
                    + record.RenewTime * LibraryConsts.RenewDuration;
         }
+
+        public static List<TR> Map<T, TR>(this IEnumerable<T> source, Func<T, TR> func)
+        {
+            var res = new List<TR>();
+            foreach (var item in source)
+            {
+                res.Add(func(item));
+            }
+            return res;
+        }
     }
 }
