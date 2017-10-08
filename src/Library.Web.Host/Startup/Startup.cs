@@ -69,6 +69,8 @@ namespace Library.Web.Host.Startup
                 options.SwaggerDoc("v1", new Info { Title = "Library API", Version = "v1" });
                 options.DocInclusionPredicate((docName, description) => true);
 
+                options.OperationFilter<AuthorizationHeaderParameterOperationFilter>();
+
                 // Define the BearerAuth scheme that's in use
                 options.AddSecurityDefinition("bearerAuth", new ApiKeyScheme()
                 {
