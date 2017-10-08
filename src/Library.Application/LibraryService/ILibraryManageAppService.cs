@@ -36,5 +36,12 @@ namespace Library.LibraryService
         /// </summary>
         /// <returns></returns>
         Task<GetOutdatedBorrowRecordOutput> GetOutdatedBorrowRecord();
+
+        /// <summary>
+        /// 发布通知
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task PublishNotification(PublishNotificationInput input);
     }
 }

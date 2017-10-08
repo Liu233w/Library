@@ -32,5 +32,24 @@ namespace Library.LibraryService
         /// </summary>
         /// <returns></returns>
         Task<ListResultDto<BookWithStatusAndMine>> GetUserBook();
+
+        /// <summary>
+        /// 获取当前用户的通知，可以指定通知类型
+        /// </summary>
+        /// <returns></returns>
+        Task<ListResultDto<MyNotificationDto>> GetMyNotifications(GetMyNotificationsInput input);
+
+        /// <summary>
+        /// 将某通知标记为已读
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task MarkNotificationAsRead(MarkNotificationAsReadInput input);
+
+        /// <summary>
+        /// 获取通知数量，包括已读通知和未读通知
+        /// </summary>
+        /// <returns></returns>
+        Task<GetNotificationCountOutput> GetNotificationCount();
     }
 }
