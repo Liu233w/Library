@@ -39,14 +39,25 @@
         <div class="card">
             <div class="body">
                 @{
-                    if (bookstatus.Count > 0){
-                        <div>The reservation is successful!</div>
-                    }
-                    else{
-                        <div>The reservation is failure!</div>
-                    }
+                     if (bookstatus.Borrowed == true)
+                    {
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            <div class="demo-google-material-icon"> <i class="material-icons">check_circle</i> <span class="icon-name">The reservation is successful!</span></div>
+                        </div>
+                     }
+                    else
+                    {
+                        <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                            <div class="demo-google-material-icon"> <i class="material-icons">highlight_off</i> <span class="icon-name">The reservation is failure!</span></div>
+                        </div>
+                     }
                 }
             </div>
         </div>
     </div>
+</div>
+<div class="modal-footer">
+
+    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+
 </div>
