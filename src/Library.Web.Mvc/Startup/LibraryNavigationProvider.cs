@@ -44,6 +44,22 @@ namespace Library.Web.Startup
                         icon: "local_offer",
                         requiredPermissionName: PermissionNames.Pages_Roles
                     )
+                 ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.AnnounceMessage,
+                        L("AnnounceMessage"),
+                        url: "AnnounceMessage",
+                        icon: "send",
+                        requiredPermissionName: PermissionNames.Pages_Roles
+                    )
+                 ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.GetMessage,
+                        L("GetMessage"),
+                        url: "GetMessage",
+                        icon: "message",
+                        requiredPermissionName: PermissionNames.Pages_Roles
+                    )
                 ).AddItem(
                     new MenuItemDefinition(
                         PageNames.BookManage,

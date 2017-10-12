@@ -10,5 +10,7 @@
 
         public const string BookManage = "BookManage";
         public const string SearchBooks = "SearchBooks";
+        public const string GetMessage = "GetMessage";
+        public const string AnnounceMessage = "AnnounceMessage";
     }
 }
