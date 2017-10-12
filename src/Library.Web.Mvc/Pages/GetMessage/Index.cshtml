@@ -1,0 +1,86 @@
+﻿@page
+
+@using Abp.Application.Services.Dto
+@using Abp.Notifications;
+@using Library.Web.Startup;
+@using Library.LibraryService.Dto;
+@using Library.LibraryService;
+@using Library.Web.Startup;
+@using Library.LibraryService
+
+@inject ILibraryAppService LibraryAppService
+@inject ILibraryManageAppService LibraryManageAppService
+
+@{
+    ViewBag.CurrentPageName = PageNames.GetMessage;
+}
+
+@functions{
+            public async Task<IActionResult> OnPostAsync(Guid userNotificationId)
+            {
+                await LibraryAppService.MarkNotificationAsRead(new MarkNotificationAsReadInput { 
+                    UserNotificationId = userNotificationId
+                });
+                return new RedirectToRouteResult(null);
+            }
+
+        }
+
+@section scripts
+{
+    <script src="~/view-resources/Pages/GetMessage/index.js" asp-append-version="true"></script>
+}
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Message
+                </h2>
+                <ul class="header-dropdown m-r--5">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="javascript:void(0);">Refresh</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="body table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Content</th>
+                            <th>Time</th>
+                            <th>Admin</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ 
+                            var res = await Model.LibraryAppService.GetMyNotifications(new GetMyNotificationsInput() {
+                                NotificationState = 0
+                            });
+                        }
+                        @{ 
+                            int cnt = 1;
+                            foreach (var item in res.Items)
+                            {
+                                <tr>
+                                    <th>@cnt</th>
+                                    <td>@item.Content</td>
+                                    <td>@item.PublishTime</td>
+                                    <td>@item.Publisher</td>
+                                    <td><button class="btn btn-primary waves-effect mark-notification" data-type="confirm"  data-usernotification-id="@item.UserNotificationId">标为已读</button></td>
+                                </tr>
+                            }
+                         }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
