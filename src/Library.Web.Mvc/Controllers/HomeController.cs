@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Web.Controllers
 {
-    [AbpMvcAuthorize]
     public class HomeController : LibraryControllerBase
     {
         public ActionResult Index()

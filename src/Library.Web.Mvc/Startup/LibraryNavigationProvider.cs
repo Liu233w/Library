@@ -17,8 +17,7 @@ namespace Library.Web.Startup
                         PageNames.Home,
                         L("HomePage"),
                         url: "",
-                        icon: "home",
-                        requiresAuthentication: true
+                        icon: "home"
                     )
                 ).AddItem(
                     new MenuItemDefinition(
@@ -73,8 +72,7 @@ namespace Library.Web.Startup
                         PageNames.SearchBooks,
                         L("SearchBooks"),
                         url: "SearchBooks",
-                        icon: "view_list",
-                        requiredPermissionName: PermissionNames.Pages_Library
+                        icon: "view_list"
                         )
 #if DEBUG
                ).AddItem(
