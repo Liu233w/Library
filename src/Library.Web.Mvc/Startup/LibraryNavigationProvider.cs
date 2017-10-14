@@ -50,7 +50,7 @@ namespace Library.Web.Startup
                         L("AnnounceMessage"),
                         url: "AnnounceMessage",
                         icon: "send",
-                        requiredPermissionName: PermissionNames.Pages_Roles
+                        requiredPermissionName: PermissionNames.Pages_LibraryManage
                     )
                  ).AddItem(
                     new MenuItemDefinition(
@@ -58,7 +58,7 @@ namespace Library.Web.Startup
                         L("GetMessage"),
                         url: "GetMessage",
                         icon: "message",
-                        requiredPermissionName: PermissionNames.Pages_Roles
+                        requiredPermissionName: PermissionNames.Pages_Library
                     )
                 ).AddItem(
                     new MenuItemDefinition(
