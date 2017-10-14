@@ -87,7 +87,7 @@
 
     <text name="BookManage">Book Manage</text>
     <text name="SearchBooks">Search Book</text>
-    <text name="GetMessage">Get Message</text>
-    <text name="AnnounceMessage">Announce Message</text>
+    <text name="GetMessage">My Notifications</text>
+    <text name="AnnounceMessage">Publish Notification</text>
   </texts>
 </localizationDictionary>
