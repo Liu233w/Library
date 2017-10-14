@@ -16,20 +16,30 @@
 }
 
 @functions{
-            public async Task<IActionResult> OnPostAsync(Guid userNotificationId)
-            {
-                await LibraryAppService.MarkNotificationAsRead(new MarkNotificationAsReadInput { 
-                    UserNotificationId = userNotificationId
-                });
-                return new RedirectToRouteResult(null);
-            }
+    public async Task<IActionResult> OnPostAsync(Guid userNotificationId)
+    {
+        await LibraryAppService.MarkNotificationAsRead(new MarkNotificationAsReadInput
+        {
+            UserNotificationId = userNotificationId
+        });
+        return new RedirectToRouteResult(null);
+    }
 
-        }
+    public bool ShowAll { get; set; }
+
+    public void OnGet(int? type)
+    {
+        ShowAll = type.HasValue && type.Value == 1;
+    }
+
+}
 
 @section scripts
 {
     <script src="~/view-resources/Pages/GetMessage/index.js" asp-append-version="true"></script>
+    
 }
+
 <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
@@ -37,17 +47,16 @@
                 <h2>
                     Message
                 </h2>
-                <ul class="header-dropdown m-r--5">
-                    <li class="dropdown">
-                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                            <i class="material-icons">more_vert</i>
-                        </a>
-                        <ul class="dropdown-menu pull-right">
-                            <li><a href="javascript:void(0);">Refresh</a></li>
-                        </ul>
-                    </li>
-                </ul>
+                        <div style="width:970px;height:30px;">
+                        @{
+                            var link = ShowAll ? "/GetMessage" : "/GetMessage?type=1";
+                            var desc = ShowAll ? "Display Unread" : "Display All";
+                        }
+                        <a class="btn btn-primary waves-effect change-state header-dropdown m-r--5" style="right"
+                            href="@link" >@desc</a>
+                        </div>
             </div>
+            
             <div class="body table-responsive">
                 <table class="table table-hover">
                     <thead>
@@ -60,12 +69,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @{ 
-                            var res = await Model.LibraryAppService.GetMyNotifications(new GetMyNotificationsInput() {
-                                NotificationState = 0
+                        @{
+                            Nullable<UserNotificationState> state = UserNotificationState.Unread;
+                            if (ShowAll)
+                            {
+                                state =  null;
+                            }
+
+                            var res = await Model.LibraryAppService.GetMyNotifications(new GetMyNotificationsInput()
+                            {
+                                NotificationState = state
                             });
                         }
-                        @{ 
+                        @{
                             int cnt = 1;
                             foreach (var item in res.Items)
                             {
@@ -74,10 +90,10 @@
                                     <td>@item.Content</td>
                                     <td>@item.PublishTime</td>
                                     <td>@item.Publisher</td>
-                                    <td><button class="btn btn-primary waves-effect mark-notification" data-type="confirm"  data-usernotification-id="@item.UserNotificationId">标为已读</button></td>
+                                    <td><button class="btn btn-primary waves-effect mark-notification" data-type="confirm" data-usernotification-id="@item.UserNotificationId">标为已读</button></td>
                                 </tr>
                             }
-                         }
+                        }
                     </tbody>
                 </table>
             </div>
