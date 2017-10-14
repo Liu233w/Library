@@ -115,7 +115,7 @@ namespace Library.Web.Controllers
         public async Task<ActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Login");
+            return RedirectToAppHome();
         }
 
 
