@@ -3,7 +3,7 @@ using Library.Users.Dto;
 
 namespace Library.LibraryService.Dto
 {
-    public class BookUserState
+    public class CopyUserState
     {
         public UserDto User { get; set; }
 

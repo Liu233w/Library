@@ -23,13 +23,15 @@ namespace Library.LibraryService
         private readonly IRepository<BorrowRecord, long> _borrowRecordRepository;
         private readonly BookInfoManager _bookInfoManager;
         private readonly IUserNotificationManager _userNotificationManager;
+        private readonly IRepository<Copy, long> _copyRepository;
 
-        public LibraryAppService(IRepository<Book, long> bookRepository, IRepository<BorrowRecord, long> borrowRecordRepository, BookInfoManager bookInfoManager, IUserNotificationManager userNotificationManager)
+        public LibraryAppService(IRepository<Book, long> bookRepository, IRepository<BorrowRecord, long> borrowRecordRepository, BookInfoManager bookInfoManager, IUserNotificationManager userNotificationManager, IRepository<Copy, long> copyRepository)
         {
             _bookRepository = bookRepository;
             _borrowRecordRepository = borrowRecordRepository;
             _bookInfoManager = bookInfoManager;
             _userNotificationManager = userNotificationManager;
+            _copyRepository = copyRepository;
         }
 
         public async Task<BookWithStatusAndMine> GetBook(GetBookInput input)
@@ -51,7 +53,7 @@ namespace Library.LibraryService
         [AbpAuthorize(PermissionNames.Pages_Library)]
         public async Task RenewBook(RenewBookInput input)
         {
-            var record = await _bookInfoManager.FindRecordOrNullAsync(input.BookId, AbpSession.UserId.Value);
+            var record = await _bookInfoManager.FindRecordOrNullByBookIdAsync(input.BookId, AbpSession.UserId.Value);
             if (record == null)
             {
                 throw new UserFriendlyException("User haven't borrow that book or book is not exist");
@@ -70,16 +72,18 @@ namespace Library.LibraryService
         {
             var borrowedList = await _borrowRecordRepository.GetAll()
                 .Where(item => item.BorrowerUserId == AbpSession.UserId.Value)
-                .Include(item => item.Book)
+                .Include(item => item.Copy)
+                .ThenInclude(item => item.Book)
                 .ToListAsync();
 
             var resList = new List<BookWithStatusAndMine>();
             foreach (var borrowRecord in borrowedList)
             {
-                var item = ObjectMapper.Map<BookWithStatusAndMine>(borrowRecord.Book);
+                var item = ObjectMapper.Map<BookWithStatusAndMine>(borrowRecord.Copy.Book);
                 item.BorrowTimeLimit = borrowRecord.GetOutdatedTime();
                 item.Borrowed = true;
-                item.Avaliable = await _bookInfoManager.GetAvailableAsync(borrowRecord.Book);
+                item.Avaliable = await _bookInfoManager.GetAvailableAsync(borrowRecord.Copy.Book);
+                item.Count = await _copyRepository.CountCopysByBookIdAsync(item.Id);
 
                 resList.Add(item);
             }
@@ -161,6 +165,7 @@ namespace Library.LibraryService
         {
             var res = ObjectMapper.Map<BookWithStatus>(book);
             res.Avaliable = await _bookInfoManager.GetAvailableAsync(book);
+            res.Count = await _copyRepository.CountCopysByBookIdAsync(book.Id);
             return res;
         }
 
@@ -176,7 +181,7 @@ namespace Library.LibraryService
             var bookWithStatus = await GetBookWithStatusFromBookAsync(book);
             var res = ObjectMapper.Map<BookWithStatusAndMine>(bookWithStatus);
 
-            var record = await _bookInfoManager.FindRecordOrNullAsync(res.Id, userId);
+            var record = await _bookInfoManager.FindRecordOrNullByBookIdAsync(res.Id, userId);
             if (record == null)
             {
                 // 没有借这本书

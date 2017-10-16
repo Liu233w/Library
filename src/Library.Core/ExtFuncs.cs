@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Abp.Domain.Repositories;
+using Library.BookManage;
 using Library.LibraryService;
 
 namespace Library
@@ -31,6 +33,11 @@ namespace Library
                 res.Add(func(item));
             }
             return res;
+        }
+
+        public static async Task<int> CountCopysByBookIdAsync(this IRepository<Copy, long> repo, long bookId)
+        {
+            return await repo.CountAsync(item => item.BookId == bookId);
         }
     }
 }

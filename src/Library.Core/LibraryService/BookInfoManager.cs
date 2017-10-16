@@ -6,6 +6,7 @@ using Abp.Domain.Repositories;
 using Abp.Domain.Uow;
 using Abp.EntityFrameworkCore.Repositories;
 using Abp.UI;
+using JetBrains.Annotations;
 using Library.BookManage;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,11 +16,22 @@ namespace Library.LibraryService
     {
         private readonly IRepository<Book, long> _bookRepository;
         private readonly IRepository<BorrowRecord, long> _borrowRecordRepository;
+        private readonly IRepository<Copy, long> _copyRepository;
 
-        public BookInfoManager(IRepository<Book, long> bookRepository, IRepository<BorrowRecord, long> borrowRecordRepository)
+        public BookInfoManager(IRepository<Book, long> bookRepository, IRepository<BorrowRecord, long> borrowRecordRepository, IRepository<Copy, long> copyRepository)
         {
             _bookRepository = bookRepository;
             _borrowRecordRepository = borrowRecordRepository;
+            _copyRepository = copyRepository;
+        }
+
+        [UnitOfWork]
+        public async Task LoadAssociatedRecordsAsync(Copy copy)
+        {
+            await _copyRepository.GetDbContext()
+                .Entry(copy)
+                .Reference(item => item.BorrowRecord)
+                .LoadAsync();
         }
 
         [UnitOfWork]
@@ -27,8 +39,16 @@ namespace Library.LibraryService
         {
             await _bookRepository.GetDbContext()
                 .Entry(book)
-                .Collection(item => item.BorrowRecords)
+                .Collection(item => item.Copys)
                 .LoadAsync();
+
+            foreach (var copy in book.Copys)
+            {
+                await _copyRepository.GetDbContext()
+                    .Entry(copy)
+                    .Reference(item => item.BorrowRecord)
+                    .LoadAsync();
+            }
         }
 
         [UnitOfWork]
@@ -36,7 +56,26 @@ namespace Library.LibraryService
         {
             await _borrowRecordRepository.GetDbContext()
                 .Entry(record)
+                .Reference(item => item.Copy)
+                .LoadAsync();
+
+            await LoadBookFromCopyAsync(record.Copy);
+        }
+
+        [UnitOfWork]
+        public async Task LoadBookFromCopyAsync(Copy copy)
+        {
+            await _copyRepository.GetDbContext()
+                .Entry(copy)
                 .Reference(item => item.Book)
+                .LoadAsync();
+        }
+
+        public async Task LoadCopysFromBookAsync(Book book)
+        {
+            await _bookRepository.GetDbContext()
+                .Entry(book)
+                .Collection(item => item.Copys)
                 .LoadAsync();
         }
 
@@ -48,10 +87,10 @@ namespace Library.LibraryService
         [UnitOfWork]
         public async Task<int> GetAvailableAsync(Book book)
         {
-            var borrowCount = await _borrowRecordRepository.GetAll()
-                .Where(item => item.BookId == book.Id)
+            var availableCount = await _copyRepository.GetAll()
+                .Where(item => item.BookId == book.Id && !item.BorrowRecordId.HasValue)
                 .CountAsync();
-            return book.Count - borrowCount;
+            return availableCount;
         }
 
         [UnitOfWork]
@@ -62,18 +101,18 @@ namespace Library.LibraryService
         }
 
         /// <summary>
-        /// 查找 Book，如果不存在，抛出UserFriendlyException；否则返回 Book
+        /// 查找 Copy，如果不存在，抛出UserFriendlyException；否则返回 Copy
         /// </summary>
         /// <exception cref="UserFriendlyException"></exception>
         [UnitOfWork]
-        public async Task<Book> EnsureBookExistAsync(long bookId)
+        public async Task<Copy> EnsureCopyExistAsync(long copyId)
         {
-            var book = await _bookRepository.FirstOrDefaultAsync(bookId);
-            if (book == null)
+            var copy = await _copyRepository.FirstOrDefaultAsync(copyId);
+            if (copy == null)
             {
-                throw new UserFriendlyException($"There is no book which id = {bookId}");
+                throw new UserFriendlyException($"There is no copy which id = {copyId}");
             }
-            return book;
+            return copy;
         }
 
         /// <summary>
@@ -83,10 +122,13 @@ namespace Library.LibraryService
         /// <param name="bookId"></param>
         /// <returns></returns>
         [UnitOfWork]
-        public Task<BorrowRecord> FindRecordOrNullAsync(long bookId, long userId)
+        public Task<BorrowRecord> FindRecordOrNullByBookIdAsync(long bookId, long userId)
         {
-            return _borrowRecordRepository.FirstOrDefaultAsync(
-                item => item.BookId == bookId && item.BorrowerUserId == userId);
+            return _borrowRecordRepository.GetAll()
+                .Where(item => item.BorrowerUserId == userId)
+                .Include(item => item.Copy).ThenInclude(item => item.Book)
+                .Where(item => item.Copy.BookId == bookId)
+                .FirstOrDefaultAsync();
         }
     }
 }

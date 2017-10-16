@@ -3,6 +3,6 @@
     public class BorrowBookInput
     {
         public string UserNameOrEmail { get; set; }
-        public long BookId { get; set; }
+        public long CopyId { get; set; }
     }
 }

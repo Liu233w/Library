@@ -7,6 +7,6 @@ namespace Library.LibraryService.Dto
     {
         public BookWithStatus Book { get; set; }
 
-        public ICollection<BookUserState> BorrowedBooks { get; set; }
+        public ICollection<CopyUserState> BorrowedCopysAndRecord { get; set; }
     }
 }

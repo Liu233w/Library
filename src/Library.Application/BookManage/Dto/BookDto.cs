@@ -18,6 +18,8 @@ namespace Library.BookManage.Dto
         public string Author { get; set; }
         public string Publish { get; set; }
         public int Count { get; set; }
+        [Required]
+        public string Location { get; set; }
 
         public void AddValidationErrors(CustomValidationContext context)
         {

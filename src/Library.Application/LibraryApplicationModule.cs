@@ -31,7 +31,7 @@ namespace Library
                 //Add maps
                 cfg.CreateMap<BorrowRecord, BorrowRecordWithAdditionalInfo>()
                     .ForMember(dest => dest.BookTitle, opts => opts.MapFrom(
-                        src => src.Book.Title))
+                        src => src.Copy.Book.Title))
                     .ForMember(dest => dest.BorrowTimeLimit, opts => opts.MapFrom(
                         src => src.GetOutdatedTime()));
             });

@@ -13,8 +13,8 @@ namespace Library.LibraryService
     [Table("AppBorrowRecords")]
     public class BorrowRecord : Entity<long>, ICreationAudited<User>, IDeletionAudited<User>, ISoftDelete
     {
-        public Book Book { get; set; }
-        public long BookId { get; set; }
+        public Copy Copy { get; set; }
+        public long CopyId { get; set; }
         public long BorrowerUserId { get; set; }
         /// <summary>
         /// 续借的次数

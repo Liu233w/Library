@@ -44,13 +44,19 @@ namespace Library.LibraryService
             await _bookInfoManager.LoadAssociatedRecordsAsync(book);
 
             var statusBooks = ObjectMapper.Map<BookWithStatus>(book);
-            statusBooks.Avaliable = book.Count - book.BorrowRecords.Count;
+            statusBooks.Avaliable = await _bookInfoManager.GetAvailableAsync(book);
 
-            var records = new List<BookUserState>();
-            foreach (var record in book.BorrowRecords)
+            var records = new List<CopyUserState>();
+            foreach (var copy in book.Copys)
             {
+                var record = copy.BorrowRecord;
+                if (record == null)
+                {
+                    continue;
+                }
+
                 var user = await UserManager.GetUserByIdAsync(record.BorrowerUserId);
-                records.Add(new BookUserState
+                records.Add(new CopyUserState
                 {
                     User = ObjectMapper.Map<UserDto>(user),
                     BorrowTimeLimit = record.CreationTime + LibraryConsts.UserMaxBorrowDuration,
@@ -60,54 +66,55 @@ namespace Library.LibraryService
             return new BookWithStatusAndRecord
             {
                 Book = statusBooks,
-                BorrowedBooks = records,
+                BorrowedCopysAndRecord = records,
             };
         }
 
         public async Task BorrowBook(BorrowBookInput input)
         {
-            await _bookInfoManager.EnsureBookExistAsync(input.BookId);
+            var copy = await _bookInfoManager.EnsureCopyExistAsync(input.CopyId);
 
-            if (await _bookInfoManager.GetAvailableAsync(input.BookId) <= 0)
+            if (copy.BorrowRecordId.HasValue)
             {
-                throw new UserFriendlyException("That book has been borrowed out");
+                throw new UserFriendlyException("That copy has been borrowed out");
             }
 
             var user = await UserManager.FindByNameOrEmailAsync(input.UserNameOrEmail);
 
-            var record = await _bookInfoManager.FindRecordOrNullAsync(input.BookId, user.Id);
+            var record = await _bookInfoManager.FindRecordOrNullByBookIdAsync(copy.BookId, user.Id);
             if (record != null)
             {
                 throw new UserFriendlyException("The user has borrowed this book");
             }
 
-            await _borrowedRecordRepository.InsertAsync(new BorrowRecord
+            var recordId = await _borrowedRecordRepository.InsertAndGetIdAsync(new BorrowRecord
             {
-                BookId = input.BookId,
+                CopyId = input.CopyId,
                 BorrowerUserId = user.Id,
                 RenewTime = 0
             });
+            copy.BorrowRecordId = recordId;
         }
 
         public async Task ReturnBook(ReturnBookInput input)
         {
-            await _bookInfoManager.EnsureBookExistAsync(input.BookId);
+            var copy = await _bookInfoManager.EnsureCopyExistAsync(input.CopyId);
 
-            var user = await UserManager.FindByNameOrEmailAsync(input.UserNameOrEmail);
-
-            var record = await _bookInfoManager.FindRecordOrNullAsync(input.BookId, user.Id);
+            var record = await _borrowedRecordRepository.FirstOrDefaultAsync(input.CopyId);
             if (record == null)
             {
-                throw new UserFriendlyException("The user heavn't borrow this book");
+                throw new UserFriendlyException("The copy heavn't been borrowed yet");
             }
 
             await _borrowedRecordRepository.DeleteAsync(record);
+            copy.BorrowRecordId = null;
+            copy.BorrowRecord = null;
         }
 
         public async Task<GetOutdatedBorrowRecordOutput> GetOutdatedBorrowRecord()
         {
             var records = await _borrowedRecordRepository.GetAll()
-                .Where(item => item.GetOutdatedTime() >= DateTime.Now)
+                .Where(item => item.GetOutdatedTime() <= DateTime.Now)
                 .ToListAsync();
 
             return new GetOutdatedBorrowRecordOutput
@@ -167,7 +174,7 @@ namespace Library.LibraryService
 
             var res = ObjectMapper.Map<BorrowRecordWithAdditionalInfo>(record);
 
-            var user = UserManager.GetUserByIdAsync(record.BorrowerUserId);
+            var user = await UserManager.GetUserByIdAsync(record.BorrowerUserId);
             res.UserInfo = ObjectMapper.Map<UserDto>(user);
 
             return res;
