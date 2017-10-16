@@ -7,12 +7,12 @@ namespace Library.EntityFrameworkCore
     {
         public static void Configure(DbContextOptionsBuilder<LibraryDbContext> builder, string connectionString)
         {
-            builder.UseSqlServer(connectionString);
+            builder.UseMySql(connectionString);
         }
 
         public static void Configure(DbContextOptionsBuilder<LibraryDbContext> builder, DbConnection connection)
         {
-            builder.UseSqlServer(connection);
+            builder.UseMySql(connection);
         }
     }
 }
