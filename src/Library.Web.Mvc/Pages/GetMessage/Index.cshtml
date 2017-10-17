@@ -1,101 +1,142 @@
 ﻿@page
 
-@using Abp.Application.Services.Dto
-@using Abp.Notifications;
-@using Library.Web.Startup;
-@using Library.LibraryService.Dto;
-@using Library.LibraryService;
-@using Library.Web.Startup;
-@using Library.LibraryService
 
-@inject ILibraryAppService LibraryAppService
-@inject ILibraryManageAppService LibraryManageAppService
 
-@{
-    ViewBag.CurrentPageName = PageNames.GetMessage;
-}
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
 
-@functions{
-    public async Task<IActionResult> OnPostAsync(Guid userNotificationId)
-    {
-        await LibraryAppService.MarkNotificationAsRead(new MarkNotificationAsReadInput
-        {
-            UserNotificationId = userNotificationId
-        });
-        return new RedirectToRouteResult(null);
-    }
 
-    public bool ShowAll { get; set; }
+            <div class="header">
+                <h2>
+                    Personal Information
+                </h2>
+                <ul class="header-dropdown m-r--5">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a id="RefreshButton" href="javascript:void(0);" class="waves-effect waves-block"><i class="material-icons">refresh</i>Refresh</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
 
-    public void OnGet(int? type)
-    {
-        ShowAll = type.HasValue && type.Value == 1;
-    }
 
-}
+            <div class="body table-responsive">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th scope="row">Name</th>
+                            <td>姓名</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">ID Number</th>
+                            <td>学号</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Department</th>
+                            <td>学院</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Accessible Number</th>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Already borrowed</th>
+                            <td>2</td>
+                        </tr>
 
-@section scripts
-{
-    <script src="~/view-resources/Pages/GetMessage/index.js" asp-append-version="true"></script>
-    
-}
+
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+        </div>
+    </div>
+</div>
+
+
 
 <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
             <div class="header">
                 <h2>
-                    Message
+                    Borrowed Current
                 </h2>
-                        <div style="width:970px;height:30px;">
-                        @{
-                            var link = ShowAll ? "/GetMessage" : "/GetMessage?type=1";
-                            var desc = ShowAll ? "Display Unread" : "Display All";
-                        }
-                        <a class="btn btn-primary waves-effect change-state header-dropdown m-r--5" style="right"
-                            href="@link" >@desc</a>
-                        </div>
+                <ul class="header-dropdown m-r--5">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a id="RefreshButton" href="javascript:void(0);" class="waves-effect waves-block"><i class="material-icons">refresh</i>Refresh</a></li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
-            
             <div class="body table-responsive">
-                <table class="table table-hover">
+                <table class="table" id="table">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Content</th>
-                            <th>Time</th>
-                            <th>Admin</th>
-                            <th>Action</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Publish</th>
+                            <th>ISBN</th>
+                            <th>Borrowed Date</th>
+                            <th>Date To Return</th>
+                            <th>CopyId</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @{
-                            Nullable<UserNotificationState> state = UserNotificationState.Unread;
-                            if (ShowAll)
-                            {
-                                state =  null;
-                            }
-
-                            var res = await Model.LibraryAppService.GetMyNotifications(new GetMyNotificationsInput()
-                            {
-                                NotificationState = state
-                            });
-                        }
-                        @{
-                            int cnt = 1;
-                            foreach (var item in res.Items)
-                            {
-                                <tr>
-                                    <th>@cnt</th>
-                                    <td>@item.Content</td>
-                                    <td>@item.PublishTime</td>
-                                    <td>@item.Publisher</td>
-                                    <td><button class="btn btn-primary waves-effect mark-notification" data-type="confirm" data-usernotification-id="@item.UserNotificationId">Mark As Read</button></td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
+                    
                 </table>
+
+            </div>
+        </div>
+    </div>
+</div> 
+
+
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Borrow  History
+                </h2>
+                <ul class="header-dropdown m-r--5">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a id="RefreshButton" href="javascript:void(0);" class="waves-effect waves-block"><i class="material-icons">refresh</i>Refresh</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="body table-responsive">
+                <table class="table" id="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Publish</th>
+                            <th>ISBN</th>
+                            <th>Borrowed Date</th>
+                            <th>Returned Date</th>
+                            <th>CopyId</th>
+                        </tr>
+                    </thead>
+
+                </table>
+
             </div>
         </div>
     </div>
