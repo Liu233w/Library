@@ -8,6 +8,7 @@ using Abp.Events.Bus;
 using Abp.Events.Bus.Entities;
 using Abp.Runtime.Session;
 using Abp.TestBase;
+using Library.Authorization.Roles;
 using Library.Authorization.Users;
 using Library.BookManage;
 using Library.EntityFrameworkCore;
@@ -25,6 +26,7 @@ namespace Library.Tests
     public abstract class LibraryTestBase : AbpIntegratedTestBase<LibraryTestModule>
     {
         private readonly IUserAppService _userAppService;
+        private readonly UserManager _userManager;
 
         protected LibraryTestBase()
         {
@@ -54,6 +56,7 @@ namespace Library.Tests
 
             //Inject Service
             _userAppService = Resolve<IUserAppService>();
+            _userManager = Resolve<UserManager>();
 
             LoginAsDefaultTenantAdmin();
         }
@@ -224,7 +227,6 @@ namespace Library.Tests
             Id = 1,
             Isbn = "1234567890",
             Author = "Author1",
-            Count = 6,
             Description = "Book1's Description",
             Publish = "Publisher1",
             Title = "Book1"
@@ -235,10 +237,33 @@ namespace Library.Tests
             Id = 2,
             Isbn = "1234567892",
             Author = "Author2",
-            Count = 3,
             Description = "Book2's Description",
             Publish = "Publisher2",
             Title = "Book2"
+        };
+
+        protected Copy Book1Copy1 => new Copy
+        {
+            Id = 1,
+            BookId = 1
+        };
+
+        protected Copy Book1Copy2 => new Copy
+        {
+            Id = 2,
+            BookId = 1
+        };
+
+        protected Copy Book2Copy1 => new Copy
+        {
+            Id = 3,
+            BookId = 2
+        };
+
+        protected Copy Book2Copy2 => new Copy
+        {
+            Id = 4,
+            BookId = 2
         };
 
         protected async Task InjectBooksDataAsync()
@@ -246,8 +271,12 @@ namespace Library.Tests
             await UsingDbContextAsync(async ctx =>
             {
                 await ctx.Books.AddAsync(Book1);
-
                 await ctx.Books.AddAsync(Book2);
+
+                await ctx.Copys.AddAsync(Book1Copy1);
+                await ctx.Copys.AddAsync(Book1Copy2);
+                await ctx.Copys.AddAsync(Book2Copy1);
+                await ctx.Copys.AddAsync(Book2Copy2);
             });
         }
 
@@ -265,6 +294,23 @@ namespace Library.Tests
                 });
         }
 
+        protected async Task MarkTestUserAsReader()
+        {
+            var john = await FindJohnAsync();
+
+            await UsingDbContextAsync(async ctx =>
+            {
+                var role = await ctx.Roles.FirstAsync(
+                    item => item.Name == StaticRoleNames.Tenants.Reader);
+                ctx.UserRoles.Add(new UserRole
+                {
+                    UserId = john.Id,
+                    RoleId = role.Id,
+                    TenantId = AbpSession.TenantId
+                });
+            });
+        }
+
         protected async Task<User> FindJohnAsync()
         {
             return await UsingDbContextAsync(async ctx =>
@@ -273,20 +319,30 @@ namespace Library.Tests
             });
         }
 
-        protected async Task<BorrowRecord> InjectBorrowRecord1AndGetAsync(int renewTime)
+        protected async Task<BorrowRecord> InjectBorrowRecord1AndGetAsync(int renewTime, bool outdated = false)
         {
+            var now = DateTime.Now;
+            var dateTime = outdated
+                ? now - LibraryConsts.UserMaxBorrowDuration - new TimeSpan(1, 0, 0, 0)
+                : now;
+
             return await UsingDbContextAsync(async ctx =>
             {
                 var record = new BorrowRecord
                 {
-                    BookId = Book1.Id,
+                    Id = 1,
+                    CopyId = Book1Copy1.Id,
                     BorrowerUserId = (await FindJohnAsync()).Id,
-                    CreationTime = new DateTime(),
+                    CreationTime = dateTime,
                     CreatorUserId = 1,
                     RenewTime = renewTime
                 };
-
                 await ctx.BorrowRecords.AddAsync(record);
+
+                var newBook1Copy1 = Book1Copy1;
+                newBook1Copy1.BorrowRecordId = 1;
+
+                ctx.Copys.Update(newBook1Copy1);
 
                 return record;
             });
