@@ -229,7 +229,8 @@ namespace Library.Tests
             Author = "Author1",
             Description = "Book1's Description",
             Publish = "Publisher1",
-            Title = "Book1"
+            Title = "Book1",
+            Location = "A1"
         };
 
         protected Book Book2 => new Book
@@ -239,7 +240,8 @@ namespace Library.Tests
             Author = "Author2",
             Description = "Book2's Description",
             Publish = "Publisher2",
-            Title = "Book2"
+            Title = "Book2",
+            Location = "A2"
         };
 
         protected Copy Book1Copy1 => new Copy
