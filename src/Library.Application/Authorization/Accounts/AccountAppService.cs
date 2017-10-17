@@ -1,8 +1,10 @@
 using System.Threading.Tasks;
+using Abp.Authorization;
 using Abp.Configuration;
 using Abp.Zero.Configuration;
 using Library.Authorization.Accounts.Dto;
 using Library.Authorization.Users;
+using Library.Users.Dto;
 
 namespace Library.Authorization.Accounts
 {
@@ -49,6 +51,13 @@ namespace Library.Authorization.Accounts
             {
                 CanLogin = user.IsActive && (user.IsEmailConfirmed || !isEmailConfirmationRequiredForLogin)
             };
+        }
+
+        [AbpAuthorize]
+        public async Task<UserDto> GetUserInformation()
+        {
+            var user = await GetCurrentUserAsync();
+            return ObjectMapper.Map<UserDto>(user);
         }
     }
 }
