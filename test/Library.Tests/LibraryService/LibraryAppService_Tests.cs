@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Castle.MicroKernel;
 using Library.LibraryService;
@@ -12,10 +13,12 @@ namespace Library.Tests.LibraryService
     public class LibraryAppService_Tests : LibraryTestBase, IAsyncLifetime
     {
         private readonly ILibraryAppService _libraryAppService;
+        private readonly ILibraryManageAppService _libraryManageAppService;
 
         public LibraryAppService_Tests()
         {
             _libraryAppService = Resolve<LibraryAppService>();
+            _libraryManageAppService = Resolve<LibraryManageAppService>();
         }
 
         public async Task InitializeAsync()
@@ -143,6 +146,55 @@ namespace Library.Tests.LibraryService
             item.Borrowed.ShouldBe(true);
             item.Count.ShouldBe(2);
             item.Avaliable.ShouldBe(1);
+        }
+
+        [Fact]
+        public async Task GetBorrowRecords_ShouldReturnCorrectly()
+        {
+            LoginAsDefaultTenantAdmin();
+            var john = await FindJohnAsync();
+
+            await _libraryManageAppService.BorrowBook(new BorrowBookInput
+            {
+                CopyId = Book1Copy1.Id,
+                UserNameOrEmail = john.EmailAddress
+            });
+            await _libraryManageAppService.ReturnBook(new ReturnBookInput
+            {
+                CopyId = Book1Copy1.Id
+            });
+            await _libraryManageAppService.BorrowBook(new BorrowBookInput
+            {
+                CopyId = Book1Copy1.Id,
+                UserNameOrEmail = john.EmailAddress
+            });
+            await _libraryManageAppService.BorrowBook(new BorrowBookInput
+            {
+                CopyId = Book2Copy1.Id,
+                UserNameOrEmail = john.EmailAddress
+            });
+
+            LoginAsTenant(Tenant.DefaultTenantName, john.UserName);
+
+            //Act
+            var res = await _libraryAppService.GetBorrowRecords();
+
+            //Asserts
+            res.Items.Count.ShouldBe(3);
+
+            var items = res.Items.ToList();
+            items[0].Returned.ShouldBe(true);
+            items[0].Time.Day.ShouldBe(DateTime.Now.Day);
+            items[0].Count.ShouldBe(2);
+            items[0].Avaliable.ShouldBe(1);
+            items[0].Title.ShouldBe(Book1.Title);
+
+            items[1].Returned.ShouldBe(false);
+            items[1].Time.Day.ShouldBe(
+                (DateTime.Now+LibraryConsts.UserMaxBorrowDuration).Day);
+
+            items[2].Returned.ShouldBe(false);
+            items[2].Title.ShouldBe(Book2.Title);
         }
     }
 }

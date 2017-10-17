@@ -7,6 +7,7 @@ using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.AutoMapper;
 using Abp.Domain.Repositories;
+using Abp.Domain.Uow;
 using Abp.Notifications;
 using Abp.UI;
 using Library.Authorization;
@@ -24,14 +25,16 @@ namespace Library.LibraryService
         private readonly BookInfoManager _bookInfoManager;
         private readonly IUserNotificationManager _userNotificationManager;
         private readonly IRepository<Copy, long> _copyRepository;
+        private readonly ICurrentUnitOfWorkProvider _currentUowProvider;
 
-        public LibraryAppService(IRepository<Book, long> bookRepository, IRepository<BorrowRecord, long> borrowRecordRepository, BookInfoManager bookInfoManager, IUserNotificationManager userNotificationManager, IRepository<Copy, long> copyRepository)
+        public LibraryAppService(IRepository<Book, long> bookRepository, IRepository<BorrowRecord, long> borrowRecordRepository, BookInfoManager bookInfoManager, IUserNotificationManager userNotificationManager, IRepository<Copy, long> copyRepository, ICurrentUnitOfWorkProvider currentUowProvider)
         {
             _bookRepository = bookRepository;
             _borrowRecordRepository = borrowRecordRepository;
             _bookInfoManager = bookInfoManager;
             _userNotificationManager = userNotificationManager;
             _copyRepository = copyRepository;
+            _currentUowProvider = currentUowProvider;
         }
 
         public async Task<BookWithStatusAndMine> GetBook(GetBookInput input)
@@ -89,6 +92,38 @@ namespace Library.LibraryService
             }
 
             return new ListResultDto<BookWithStatusAndMine>(resList);
+        }
+
+        public async Task<ListResultDto<UserBorrowRecord>> GetBorrowRecords()
+        {
+            _currentUowProvider.Current.DisableFilter(AbpDataFilters.SoftDelete);
+            var borrowedList = await _borrowRecordRepository.GetAll()
+                .Where(item => item.BorrowerUserId == AbpSession.UserId.Value)
+                .ToListAsync();
+
+            var resList = new List<UserBorrowRecord>();
+            foreach (var borrowRecord in borrowedList)
+            {
+                // 看起来禁用 filter 之后没法直接关联entity了，必须显示查询。否则单元测试会报错。
+                var copy = await _copyRepository.GetAsync(borrowRecord.CopyId);
+                var book = await _bookRepository.GetAsync(copy.BookId);
+                var item = ObjectMapper.Map<UserBorrowRecord>(book);
+                item.Returned = borrowRecord.IsDeleted;
+                if (item.Returned)
+                {
+                    item.Time = borrowRecord.DeletionTime.Value;
+                }
+                else
+                {
+                    item.Time = borrowRecord.GetOutdatedTime();
+                }
+                item.Avaliable = await _bookInfoManager.GetAvailableAsync(book);
+                item.Count = await _copyRepository.CountCopysByBookIdAsync(item.Id);
+
+                resList.Add(item);
+            }
+
+            return new ListResultDto<UserBorrowRecord>(resList);
         }
 
         [AbpAuthorize]

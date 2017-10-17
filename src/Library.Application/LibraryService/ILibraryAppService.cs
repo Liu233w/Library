@@ -28,10 +28,16 @@ namespace Library.LibraryService
         Task RenewBook(RenewBookInput input);
 
         /// <summary>
-        /// 获取当前用户借书情况
+        /// 获取当前用户借书情况（所有未还的图书）
         /// </summary>
         /// <returns></returns>
         Task<ListResultDto<BookWithStatusAndMine>> GetUserBook();
+
+        /// <summary>
+        /// 获取借阅记录，包含当前正在借的和已经还了的所有图书
+        /// </summary>
+        /// <returns></returns>
+        Task<ListResultDto<UserBorrowRecord>> GetBorrowRecords();
 
         /// <summary>
         /// 获取当前用户的通知，可以指定通知类型
