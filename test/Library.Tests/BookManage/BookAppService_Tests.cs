@@ -178,5 +178,23 @@ namespace Library.Tests.BookManage
             //Asserts
             await task.ShouldThrowAsync<UserFriendlyException>();
         }
+
+        [Fact]
+        public async Task GetCopys_ShouldReturnCorrectly()
+        {
+            await InjectBooksDataAsync();
+
+            //Act
+            var res = await _bookAppService.GetCopys(new GetCopysInput
+            {
+                BookId = Book1.Id
+            });
+
+            //Asserts
+            var items = res.Items.ToList();
+            items.Count.ShouldBe(2);
+            items.ShouldContain(Book1Copy1.Id);
+            items.ShouldContain(Book1Copy2.Id);
+        }
     }
 }

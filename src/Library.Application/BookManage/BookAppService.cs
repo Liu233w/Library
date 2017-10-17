@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Abp.Application.Services;
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
@@ -33,6 +34,19 @@ namespace Library.BookManage
         public async Task DeleteCopy(DeleteCopyInput input)
         {
             await _copyRepository.DeleteAsync(input.CopyId);
+        }
+
+        public async Task<GetCopysOutput> GetCopys(GetCopysInput input)
+        {
+            var res = await _copyRepository.GetAll()
+                .Where(item => item.BookId == input.BookId)
+                .Select(item => item.Id)
+                .ToListAsync();
+
+            return new GetCopysOutput
+            {
+                Items = res
+            };
         }
 
         public override async Task<PagedResultDto<BookDto>> GetAll(PagedAndSortedResultRequestDto input)
