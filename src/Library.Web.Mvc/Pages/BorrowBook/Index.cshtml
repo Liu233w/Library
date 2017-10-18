@@ -54,40 +54,115 @@
             <small>welcome to borrow the book</small>
         </div>
         <div class="card">
-            <div class="body">
+            <div class="body table-responsive">
                 <form id="sign_in" method="POST">
                     @Html.AntiForgeryToken()
                     <div class="msg"><h3>please scan the book's copyid</h3></div>
                    
-                    <div class="col-sm-6">
+                    <div class="col-sm-3">
                         <div class="input-group">
                          
                             <span class="input-group-addon">
                                 <i class="material-icons">book</i>
                             </span>
                             <div class="form-line">
+                            
                                 <input id="copyid" type="text" class="form-control" name="copyid" placeholder="copyid" required autofocus value="">
+                                <br/>
                             </div>
                         </div>
                     </div>
-
-                    <div class="col-sm-6">
+                    <div class="col-sm-9">
                         <div class="input-group">
-                            <span class="input-group-addon">
-                                <i class="material-icons">person</i>
-                            </span>
-                            <div class="form-line">
-                                <p>Input CopyID</p>
-                                <input id="userid" type="text" class="form-control" name="userid" placeholder="userid or email" required value="">
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                                <div class="card">
+                                    <div class="header">
+                                        <h2>
+                                            Book Information
+                                        </h2>
+                                        <div class="body">
+                                            <div class="row clearfix">
+                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+
+                                                    <!--书的图片-->
+                                                    
+                                                </div>
+                                                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-9">
+
+                                                    <label for="email_address">Book Title</label>
+                                                    <div class="form-group">
+                                                        <div class="form-line">
+                                                            <p>Book Title</p>
+                                                        </div>
+                                                    </div>
+                                                    <label for="password">Book ID</label>
+                                                    <div class="form-group">
+                                                        <div class="form-line">
+                                                            <p>Book ID</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-xs-4">
-                            <center><button id="borrow" class="btn btn-block bg-pink waves-effect" type="submit">Borrow</button></center>
-                        </div>
-                    </div>
-                </form>
+                   
+                                <div class="col-sm-3">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="material-icons">person</i>
+                                        </span>
+                                        <div class="form-line">
+
+                                            <input id="userid" type="text" class="form-control" name="userid" placeholder="userid or email" required value="">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                                            <div class="card">
+                                                <div class="header">
+                                                    <h2>
+                                                        Student Information
+                                                    </h2>
+
+                                                    <div class="body">
+                                                        <div class="row clearfix">
+                                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                                                <!--学生照片-->
+                                                            </div>
+                                                            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-9">
+                                                                <label for="email_address">Student ID</label>
+                                                                <div class="form-group">
+                                                                    <div class="form-line">
+                                                                        <p>Student ID</p>
+                                                                    </div>
+                                                                </div>
+                                                                <label for="password">Student Name</label>
+                                                                <div class="form-group">
+                                                                    <div class="form-line">
+                                                                        <p>Student Name</p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-4">
+                                        <center><button id="borrow" class="btn btn-block bg-pink waves-effect" type="submit">Borrow</button></center>
+                                    </div>
+                                </div>
+</form>
             </div>
         </div>
     </div>
