@@ -82,6 +82,14 @@ namespace Library.Web.Startup
                         icon: "pan_tool",
                         requiredPermissionName: PermissionNames.Pages_LibraryManage
                         )
+                 ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.ReturnBook,
+                        L("ReturnBook"),
+                        url: "ReturnBook",
+                        icon: "assignment_return",
+                        requiredPermissionName: PermissionNames.Pages_LibraryManage
+                        )
 #if DEBUG
                ).AddItem(
                     new MenuItemDefinition(
