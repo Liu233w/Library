@@ -1,0 +1,66 @@
+﻿@page
+
+@using Abp.Application.Services.Dto
+@using Abp.Notifications
+@using Library.Web.Startup
+@using Library.LibraryService.Dto;
+@using Library.LibraryService;
+@using Library.Web.Startup;
+
+
+@inject ILibraryAppService LibraryAppService
+@inject ILibraryManageAppService LibraryManageAppService
+@{
+    Layout = null;
+}
+
+@functions
+{
+    public BookWithStatusAndMine bookstatus { set; get; }
+
+    public async Task OnPostAsync(long copyId)
+    {
+        var bookInput = new BorrowBookInput()
+        {
+            CopyId = copyId
+        };
+    }
+}
+
+
+
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span>Return State</span>
+                </h4>
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="body">
+                    <!--此处要调用接口进行判断-->
+                    <!--还书成功-->
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                        <div class="demo-google-material-icon">
+                            <i class="material-icons">check_circle</i> <span class="text">Return Succeed!</span>
+                        </div>
+                    </div>
+                    <!--该书没有被借记录-->
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                        <div class="demo-google-material-icon">
+                            <i class="material-icons">highlight_off</i> <span class="text">The book has no boorow record.</span>
+                        </div>
+                    </div>
+                    <!--借书超期罚款-->
+                    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+                        <div class="demo-google-material-icon">
+                            <i class="material-icons">highlight_off</i> <span class="text">Overdue! Please pay fines.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!--此处要调用接口进行判断,若超期显示paybutton-->
+                <button class="btn btn-primary waves-effect release-message" type="submit">Pay</button>
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancel</button>
+
+            </div>
