@@ -1,0 +1,197 @@
+@page
+
+@using Abp.Application.Services.Dto
+@using Abp.Notifications;
+@using Library.Web.Startup;
+@using Library.LibraryService.Dto;
+@using Library.LibraryService;
+@using Library.Web.Startup;
+@using Library.LibraryService
+
+
+@using Library.BookManage
+@using Library.BookManage.Dto
+@using Library.Sessions
+
+
+
+@inject ILibraryAppService LibraryAppService
+@inject ILibraryManageAppService LibraryManageAppService
+@inject IBookAppService BookAppService
+
+@{
+    ViewBag.CurrentPageName = PageNames.PersonnalInformation;
+}
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+
+
+            <div class="header">
+                <h2>
+                    Personal Information
+                </h2>
+                <ul class="header-dropdown m-r--5">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a id="RefreshButton" href="javascript:void(0);" class="waves-effect waves-block"><i class="material-icons">refresh</i>Refresh</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+
+            <div class="body table-responsive">
+                <table class="table">
+                    <tbody>
+                    <tbody>
+                        <tr>
+                            <th scope="row">UserName</th>
+                            <td>Name</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Name</th>
+                            <td>ID Number</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Surname</th>
+                            <td>Department</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">EmailAddress</th>
+                            <td>20</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">RoleNames</th>
+                            <td>2</td>
+                        </tr>
+
+
+                    </tbody>
+
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Borrowed Current
+                </h2>
+                <ul class="header-dropdown m-r--5">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a id="RefreshButton" href="javascript:void(0);" class="waves-effect waves-block"><i class="material-icons">refresh</i>Refresh</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="body table-responsive">
+                <table class="table" id="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Isbn</th>
+                            <th>BorrowedDate</th>
+                            <th>DateToReturn</th>
+                            <th>CopyId</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @{
+                            var res = await Model.BookAppService.GetAll(new PagedAndSortedResultRequestDto());
+                        }
+                        @foreach (var item in res.Items)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.Author</td>
+                                <td>@item.Isbn</td>
+                                <td>BorrowedDate</td>
+                                <td>ReturnedDate</td>
+                                <td>CopyId</td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div> 
+
+
+
+<div class="row clearfix">
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="card">
+            <div class="header">
+                <h2>
+                    Borrow  History
+                </h2>
+                <ul class="header-dropdown m-r--5">
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                            <i class="material-icons">more_vert</i>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a id="RefreshButton" href="javascript:void(0);" class="waves-effect waves-block"><i class="material-icons">refresh</i>Refresh</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="body table-responsive">
+                <table class="table" id="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Isbn</th>
+                            <th>BorrowedDate</th>
+                            <th>ReturnedDate</th>
+                            <th>CopyId</th>
+                        </tr>
+                    </thead>
+                    
+                    <tbody>
+                       
+                        @foreach (var item in res.Items)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.Author</td>
+                                <td>@item.Isbn</td>
+                                <td>BorrowedDate</td>
+                                <td>ReturnedDate</td>
+                                <td>CopyId</td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>

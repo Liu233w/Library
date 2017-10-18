@@ -14,5 +14,7 @@
         public const string AnnounceMessage = "AnnounceMessage";
         public const string BorrowBook = "BorrowBook";
         public const string ReturnBook = "ReturnBook";
+        public const string PersonnalInformation = "PersonnalInformation";
+
     }
 }

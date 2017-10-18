@@ -91,5 +91,6 @@
     <text name="AnnounceMessage">Publish Notification</text>
     <text name="BorrowBook">Borrow Book</text>
     <text name="ReturnBook">Return Book</text>
+    <text name="PersonnalInformation">Personnal Information</text>
   </texts>
 </localizationDictionary>
