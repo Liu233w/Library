@@ -12,5 +12,6 @@
         public const string SearchBooks = "SearchBooks";
         public const string GetMessage = "GetMessage";
         public const string AnnounceMessage = "AnnounceMessage";
+        public const string BorrowBook = "BorrowBook";
     }
 }

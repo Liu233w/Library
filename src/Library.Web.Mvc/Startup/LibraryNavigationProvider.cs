@@ -74,6 +74,14 @@ namespace Library.Web.Startup
                         url: "SearchBooks",
                         icon: "view_list"
                         )
+                ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.BorrowBook,
+                        L("BorrowBook"),
+                        url: "BorrowBook",
+                        icon: "pan_tool",
+                        requiredPermissionName: PermissionNames.Pages_LibraryManage
+                        )
 #if DEBUG
                ).AddItem(
                     new MenuItemDefinition(
