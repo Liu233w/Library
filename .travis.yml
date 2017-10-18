@@ -23,7 +23,9 @@ script:
   - cd ../../
 
 before_deploy:
-  - sh build/build.sh
+  - cd build
+  - sh build.sh
+  - cd ..
   - zip -r dist.zip dist/
 
 deploy:
