@@ -17,28 +17,34 @@ mono: none
 dotnet: 2.0.0
 dist: trusty
 
-jobs:
+matrix:
   include:
     - stage: test
 
       install:
         - cd test/Library.Tests
         - dotnet restore
+        - cd ../../
 
       script:
         - dotnet test
 
     - stage: deploy
 
+      sudo: true
+
       install:
-        - cd ../../src/Library.Web.Mvc
+        - sudo apt-get install -y nodejs
+        - cd src/Library.Web.Mvc
         - dotnet restore
+        - cd wwwroot
+        - npm install
+        - cd ../../..
 
       script:
         - dotnet publish -f netcoreapp2.0 -c Release
 
       before_deploy:
-        - cd ../..
         - zip -r dist.zip src/Library.Web.Mvc/bin/Release/netcoreapp2.0/publish
 
       deploy:
