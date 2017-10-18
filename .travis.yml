@@ -1,0 +1,51 @@
+notifications:
+  email:
+    on_success: never
+    on_failure: always
+
+sudo: false
+
+stages:
+  - name: test
+  - name: deploy
+    if: tag =~ ^v
+
+language: csharp
+Solution: Library.sln
+
+mono: none
+dotnet: 2.0.0
+dist: trusty
+
+jobs:
+  include:
+    - stage: test
+
+      install:
+        - cd test/Library.Tests
+        - dotnet restore
+
+      script:
+        - dotnet test
+
+    - stage: deploy
+
+      install:
+        - cd ../../src/Library.Web.Mvc
+        - dotnet restore
+
+      script:
+        - dotnet publish -f netcoreapp2.0 -c Release
+
+      before_deploy:
+        - cd ../..
+        - zip -r dist.zip src/Library.Web.Mvc/bin/Release/netcoreapp2.0/publish
+
+      deploy:
+        provider: releases
+        api_key: "d041edda1db6dd816936aa3bb3c9320dba492e36"
+        file:
+          - dist.zip
+        skip_cleanup: true
+        on:
+          tags: true
