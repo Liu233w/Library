@@ -3,12 +3,7 @@ notifications:
     on_success: never
     on_failure: always
 
-sudo: false
-
-stages:
-  - name: test
-  - name: deploy
-    if: tag =~ ^v
+sudo: true
 
 language: csharp
 Solution: Library.sln
@@ -17,41 +12,28 @@ mono: none
 dotnet: 2.0.0
 dist: trusty
 
-matrix:
-  include:
-    - stage: test
+install:
+  - sudo apt-get install -y nodejs
+  - cd src/Library.Web.Mvc
+  - dotnet restore
+  - cd wwwroot
+  - npm install
+  - cd ../../..
 
-      install:
-        - cd test/Library.Tests
-        - dotnet restore
+script:
+  - cd test/Library.Tests
+  - dotnet test
+  - cd ../../
 
-      script:
-        - dotnet test
-        - cd ../../
+before_deploy:
+  - dotnet publish -f netcoreapp2.0 -c Release src/Library.Web.Mvc
+  - zip -r dist.zip src/Library.Web.Mvc/bin/Release/netcoreapp2.0/publish
 
-    - stage: deploy
-
-      sudo: true
-
-      install:
-        - sudo apt-get install -y nodejs
-        - cd src/Library.Web.Mvc
-        - dotnet restore
-        - cd wwwroot
-        - npm install
-        - cd ../../..
-
-      script:
-        - dotnet publish -f netcoreapp2.0 -c Release
-
-      before_deploy:
-        - zip -r dist.zip src/Library.Web.Mvc/bin/Release/netcoreapp2.0/publish
-
-      deploy:
-        provider: releases
-        api_key: "d041edda1db6dd816936aa3bb3c9320dba492e36"
-        file:
-          - dist.zip
-        skip_cleanup: true
-        on:
-          tags: true
+deploy:
+  provider: releases
+  api_key: "d041edda1db6dd816936aa3bb3c9320dba492e36"
+  file:
+    - dist.zip
+  skip_cleanup: true
+  on:
+    tags: true
