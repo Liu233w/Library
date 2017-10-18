@@ -24,10 +24,10 @@ matrix:
       install:
         - cd test/Library.Tests
         - dotnet restore
-        - cd ../../
 
       script:
         - dotnet test
+        - cd ../../
 
     - stage: deploy
 
