@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Library.LibraryService;
@@ -16,5 +17,7 @@ namespace Library.BookManage
         public string Location { get; set; }
 
         public ICollection<Copy> Copys { get; set; }
+
+        public Guid? BookPhotoId { get; set; }
     }
 }

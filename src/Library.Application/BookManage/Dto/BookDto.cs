@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Abp.Application.Services.Dto;
 using Abp.AutoMapper;
@@ -20,6 +21,8 @@ namespace Library.BookManage.Dto
         public int Count { get; set; }
         [Required]
         public string Location { get; set; }
+
+        public Guid? BookPhotoId { get; set; }
 
         public void AddValidationErrors(CustomValidationContext context)
         {
