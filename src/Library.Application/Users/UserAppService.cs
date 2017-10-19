@@ -13,7 +13,9 @@ using Abp.Authorization.Users;
 using Abp.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Abp.IdentityFramework;
+using Abp.UI;
 using Library.Authorization.Roles;
+using Library.LibraryService;
 using Library.Roles.Dto;
 
 namespace Library.Users
@@ -25,19 +27,22 @@ namespace Library.Users
         private readonly RoleManager _roleManager;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly IRepository<Role> _roleRepository;
+        private readonly BookInfoManager _bookInfoManager;
 
         public UserAppService(
             IRepository<User, long> repository,
             UserManager userManager,
             IPasswordHasher<User> passwordHasher,
             IRepository<Role> roleRepository,
-            RoleManager roleManager)
+            RoleManager roleManager, 
+            BookInfoManager bookInfoManager)
             : base(repository)
         {
             _userManager = userManager;
             _passwordHasher = passwordHasher;
             _roleRepository = roleRepository;
             _roleManager = roleManager;
+            _bookInfoManager = bookInfoManager;
         }
 
         public override async Task<UserDto> Create(CreateUserDto input)
@@ -82,6 +87,12 @@ namespace Library.Users
 
         public override async Task Delete(EntityDto<long> input)
         {
+            var notReturnBook = await _bookInfoManager.UserIsBorrowingBookAsync(input.Id);
+            if (notReturnBook)
+            {
+                throw new UserFriendlyException("The user has books which not returned");
+            }
+
             var user = await _userManager.GetUserByIdAsync(input.Id);
             await _userManager.DeleteAsync(user);
         }

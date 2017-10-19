@@ -130,5 +130,18 @@ namespace Library.LibraryService
                 .Where(item => item.Copy.BookId == bookId)
                 .FirstOrDefaultAsync();
         }
+
+        /// <summary>
+        /// 返回用户有没有正在借书
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns>如果用户借了书还没还，返回true；如果用户没借书或者归还了所有的图书，返回false</returns>
+        [UnitOfWork]
+        public async Task<bool> UserIsBorrowingBookAsync(long userId)
+        {
+            return await _borrowRecordRepository.GetAll()
+                .Where(item => item.BorrowerUserId == userId)
+                .AnyAsync();
+        }
     }
 }
