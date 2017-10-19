@@ -89,6 +89,7 @@ namespace Library.Web.Startup
                         url: "ReturnBook",
                         icon: "assignment_return",
                         requiredPermissionName: PermissionNames.Pages_LibraryManage
+                        )
                 ).AddItem(
                     new MenuItemDefinition(
                         PageNames.PersonnalInformation,
