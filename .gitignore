@@ -259,3 +259,6 @@ Logs.txt
 
 # readme
 !/dist/README.txt
+
+# uploads
+/src/Library.Web.Mvc/App_Data/Upload

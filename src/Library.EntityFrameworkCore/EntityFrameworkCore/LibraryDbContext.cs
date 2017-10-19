@@ -5,6 +5,7 @@ using Library.Authorization.Users;
 using Library.BookManage;
 using Library.LibraryService;
 using Library.MultiTenancy;
+using Library.Storage;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.EntityFrameworkCore
@@ -15,7 +16,8 @@ namespace Library.EntityFrameworkCore
         public DbSet<Book> Books { get; set; }
         public DbSet<BorrowRecord> BorrowRecords { get; set; }
         public DbSet<Copy> Copys { get; set; }
-        
+        public DbSet<BinaryObject> BinaryObjects { get; set; }        
+
         public LibraryDbContext(DbContextOptions<LibraryDbContext> options)
             : base(options)
         {
