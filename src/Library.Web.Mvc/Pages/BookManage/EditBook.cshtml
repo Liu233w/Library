@@ -107,12 +107,43 @@
                         <div class="col-sm-12">
                             <div class="form-group form-float">
                                 <div class="form-line">
+                                    <input type="text" name="location" class="form-control" value="@Model.book.Location">
+                                    <label class="form-label">Location</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div class="form-group form-float">
+                                <div class="form-line">
                                     <textarea name="description" class="form-control no-resize" value="@Model.book.Description"></textarea>
                                     <label class="form-label">Description</label>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <img class="img img-responsive" id="book-photo" />
+                        </div>
+                    </div>
+
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <input id="file-upload" type="file" data-url="/Uploads/UploadFiles" />
+                            <span id="upload-status"></span>
+                        </div>
+                    </div>
+                    
+                    @{
+                        var photoId = book.BookPhotoId.HasValue ?
+                            book.BookPhotoId.Value.ToString() : "";
+                    }
+                    <input type="text" class="hidden" name="fileId" id="file-id" value="@photoId"/>
                 </div>
             </div>
             <div class="modal-footer">
@@ -127,5 +158,29 @@
     (function() {
         var _$form = $('form[name=bookForm]');
         $.AdminBSB.input.activate(_$form);
+
+        function refreshPhoto() {
+            var id = $('#file-id').attr('value');
+            if (id) {
+                var url = '/Uploads/GetFile?id=' + id;
+                $('#book-photo').attr('src', url);
+            }
+        }
+        $('#file-upload').fileupload({
+            dataType: 'json',
+            add: function(e, data) {
+                $('#upload-status').text('Uploading...');
+                data.submit();
+            },
+            done: function(e, data) {
+                console.log(data);
+                var id = data._response.result.result[0].id;
+                $('#upload-status').text('Finished');
+                $('#file-id').attr('value', id);
+                refreshPhoto();
+            }
+        });
+
+        refreshPhoto();
     })();
 </script>

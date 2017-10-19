@@ -16,7 +16,9 @@
 @functions
 {
 
-    public async Task<IActionResult> OnPostAsync(long bookId, string title, string description, string author, string publish, string isbn, int count)
+    public async Task<IActionResult> OnPostAsync(long bookId, string title, 
+        string description, string author, string publish, string isbn, int count,
+        string location, Guid fileId)
     {
         var dto = new BookDto()
         {
@@ -25,7 +27,9 @@
             Isbn = isbn,
             Publish = publish,
             Author = author,
-            Count = count
+            Count = count,
+            Location = location,
+            BookPhotoId = fileId
         };
 
         if (bookId == 0)
@@ -46,6 +50,10 @@
 {
     <script src="~/view-resources/Pages/BookManage/Index.js" asp-append-version="true"></script>
     
+    <script src="~/lib/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="~/lib/blueimp-file-upload/js/jquery.iframe-transport.js"></script>
+    <script src="~/lib/blueimp-file-upload/js/jquery.fileupload.js"></script>
+    
     <script>
         $(function() {
             $("#table").DataTable({
@@ -62,6 +70,11 @@
             });
         });
     </script>
+}
+
+@section styles 
+{
+    <link href="~/lib/blueimp-file-upload/css/jquery.fileupload.css" rel="stylesheet"/>
 }
 
 <div class="row clearfix">
