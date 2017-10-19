@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using Abp.AspNetCore;
@@ -70,6 +71,20 @@ namespace Library
         public override void Initialize()
         {
             IocManager.RegisterAssemblyByConvention(typeof(LibraryWebCoreModule).GetAssembly());
+        }
+
+        public override void PostInitialize()
+        {
+            SetAppFoldersConfig();
+        }
+
+        private void SetAppFoldersConfig()
+        {
+            var appFolders = IocManager.Resolve<AppFoldersConfiguration>();
+            appFolders.AppDataFolder = Path.Combine(_env.ContentRootPath, "App_Data");
+            appFolders.UploadFolder = Path.Combine(appFolders.AppDataFolder, @"Upload\Common"); // 指定目录 \App_Data\Upload\Common\
+            appFolders.Attachments = Path.Combine(appFolders.AppDataFolder, @"Upload\Attachments"); // 指定目录 \App_Data\Upload\Attachments\
+            appFolders.WebLogsFolder = Path.Combine(appFolders.AppDataFolder, @"Logs");    // 指定目录 \App_Data\Logs\
         }
     }
 }
