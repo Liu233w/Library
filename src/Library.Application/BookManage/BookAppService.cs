@@ -7,6 +7,7 @@ using Abp.Domain.Repositories;
 using Abp.UI;
 using Library.Authorization;
 using Library.BookManage.Dto;
+using Library.LibraryService;
 using Microsoft.EntityFrameworkCore;
 
 namespace Library.BookManage
@@ -15,10 +16,12 @@ namespace Library.BookManage
     public class BookAppService : AsyncCrudAppService<Book, BookDto, long>, IBookAppService
     {
         private readonly IRepository<Copy, long> _copyRepository;
+        private readonly BookInfoManager _bookInfoManager;
 
-        public BookAppService(IRepository<Book, long> repository, IRepository<Copy, long> copyRepository) : base(repository)
+        public BookAppService(IRepository<Book, long> repository, IRepository<Copy, long> copyRepository, BookInfoManager bookInfoManager) : base(repository)
         {
             _copyRepository = copyRepository;
+            _bookInfoManager = bookInfoManager;
         }
 
         public override async Task<BookDto> Get(EntityDto<long> input)
@@ -47,6 +50,19 @@ namespace Library.BookManage
             {
                 Items = res
             };
+        }
+
+        public async Task<BookDto> GetBookByCopyId(GetBookByCopyIdInput input)
+        {
+            var copy = await _copyRepository.FirstOrDefaultAsync(input.CopyId);
+            if (copy == null)
+            {
+                throw new UserFriendlyException("Can't find the copy");
+            }
+
+            await _bookInfoManager.LoadBookFromCopyAsync(copy);
+
+            return await MapBookAsync(copy.Book);
         }
 
         public override async Task<PagedResultDto<BookDto>> GetAll(PagedAndSortedResultRequestDto input)

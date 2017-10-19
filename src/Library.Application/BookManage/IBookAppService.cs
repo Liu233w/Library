@@ -14,5 +14,12 @@ namespace Library.BookManage
         /// <param name="input"></param>
         /// <returns></returns>
         Task<GetCopysOutput> GetCopys(GetCopysInput input);
+
+        /// <summary>
+        /// 根据CopyId来获得书籍信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<BookDto> GetBookByCopyId(GetBookByCopyIdInput input);
     }
 }

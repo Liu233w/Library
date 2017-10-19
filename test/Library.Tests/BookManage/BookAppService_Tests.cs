@@ -196,5 +196,21 @@ namespace Library.Tests.BookManage
             items.ShouldContain(Book1Copy1.Id);
             items.ShouldContain(Book1Copy2.Id);
         }
+
+        [Fact]
+        public async Task GetBookByCopyId_ShouldReturnCorrectly()
+        {
+            await InjectBooksDataAsync();
+
+            //Act
+            var res = await _bookAppService.GetBookByCopyId(new GetBookByCopyIdInput
+            {
+                CopyId = Book1Copy1.Id
+            });
+
+            //Asserts
+            res.Count.ShouldBe(2);
+            res.Title.ShouldBe(Book1.Title);
+        }
     }
 }
