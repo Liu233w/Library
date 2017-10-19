@@ -123,6 +123,17 @@ namespace Library.LibraryService
             };
         }
 
+        public async Task<GetUnreturnedRecordOutput> GetUnreturnedRecord()
+        {
+            var records = await _borrowedRecordRepository.GetAll()
+                .ToListAsync();
+
+            return new GetUnreturnedRecordOutput
+            {
+                Items = await records.MapAsync(GetOutputRecord)
+            };
+        }
+
         public async Task PublishNotification(PublishNotificationInput input)
         {
             var user = await GetCurrentUserAsync();

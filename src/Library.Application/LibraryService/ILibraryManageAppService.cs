@@ -39,6 +39,12 @@ namespace Library.LibraryService
         Task<GetOutdatedBorrowRecordOutput> GetOutdatedBorrowRecord();
 
         /// <summary>
+        /// 获取所有未还图书的记录
+        /// </summary>
+        /// <returns></returns>
+        Task<GetUnreturnedRecordOutput> GetUnreturnedRecord();
+
+        /// <summary>
         /// 发布通知
         /// </summary>
         /// <param name="input"></param>

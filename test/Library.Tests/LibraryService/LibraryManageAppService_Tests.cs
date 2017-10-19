@@ -230,6 +230,25 @@ namespace Library.Tests.LibraryService
             item.UserInfo.EmailAddress.ShouldBe(john.EmailAddress);
         }
 
+        [Fact]
+        public async Task GetUnreturnedRecord_ShouldReturnCorrectly()
+        {
+            var record = await InjectBorrowRecord1AndGetAsync(0);
+            var john = await FindJohnAsync();
+
+            //Act
+            var res = await _libraryManageAppService.GetUnreturnedRecord();
+
+            //Asserts
+            res.Items.Count.ShouldBe(1);
+
+            var item = res.Items.First();
+            item.BookTitle.ShouldBe(Book1.Title);
+            item.BorrowTimeLimit.ShouldBe(record.CreationTime + LibraryConsts.UserMaxBorrowDuration);
+            item.CopyId.ShouldBe(Book1Copy1.Id);
+            item.UserInfo.EmailAddress.ShouldBe(john.EmailAddress);
+        }
+
         public async Task InitializeAsync()
         {
             await InjectBooksDataAsync();
