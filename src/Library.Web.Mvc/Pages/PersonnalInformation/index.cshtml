@@ -12,17 +12,30 @@
 @using Library.BookManage
 @using Library.BookManage.Dto
 @using Library.Sessions
-
+@using Library.Authorization.Accounts
 
 
 @inject ILibraryAppService LibraryAppService
 @inject ILibraryManageAppService LibraryManageAppService
 @inject IBookAppService BookAppService
-
+@inject IAccountAppService AccountAppService
 @{
     ViewBag.CurrentPageName = PageNames.PersonnalInformation;
 }
+@functions
+{
 
+    public async Task<IActionResult> OnPostAsync()
+    {
+
+        await LibraryAppService.GetUserBook();//获取当前用户借书情况（所有未还的图书）
+        await LibraryAppService.GetBorrowRecords();//获取借阅记录，包含当前正在借的和已经还了的所有图书
+        await AccountAppService.GetUserInformation();//获取用户信息
+        return new RedirectToRouteResult(null);
+    }
+
+
+}
 <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
@@ -47,33 +60,36 @@
 
             <div class="body table-responsive">
                 <table class="table">
-                    <tbody>
+                    @{
+                        var user = await AccountAppService.GetUserInformation(); //获取用户信息
+                    }
+                    @{ 
                     <tbody>
                         <tr>
                             <th scope="row">UserName</th>
-                            <td>Name</td>
+                            <td>@user.UserName</td>
                         </tr>
                         <tr>
                             <th scope="row">Name</th>
-                            <td>ID Number</td>
+                            <td>@user.Name</td>
                         </tr>
                         <tr>
                             <th scope="row">Surname</th>
-                            <td>Department</td>
+                            <td>@user.Surname</td>
                         </tr>
                         <tr>
                             <th scope="row">EmailAddress</th>
-                            <td>20</td>
+                            <td>@user.EmailAddress</td>
                         </tr>
                         <tr>
                             <th scope="row">RoleNames</th>
-                            <td>2</td>
+                            <td>@user.RoleNames</td>
                         </tr>
 
 
-                    </tbody>
-
-                    </tbody>
+                    </tbody>}
+                    
+                    
                 </table>
             </div>
 
@@ -104,6 +120,8 @@
                     </li>
                 </ul>
             </div>
+
+
             <div class="body table-responsive">
                 <table class="table" id="table">
                     <thead>
@@ -119,7 +137,7 @@
 
                     <tbody>
                         @{
-                            var res = await Model.BookAppService.GetAll(new PagedAndSortedResultRequestDto());
+                            var res = await LibraryAppService.GetUserBook(); //获取当前用户借书情况（所有未还的图书）
                         }
                         @foreach (var item in res.Items)
                         {
@@ -175,8 +193,11 @@
                     </thead>
                     
                     <tbody>
+                        @{
+                            var res1 = await LibraryAppService.GetBorrowRecords(); //获取借阅记录，包含当前正在借的和已经还了的所有图书
+                        }
                        
-                        @foreach (var item in res.Items)
+                        @foreach (var item in res1.Items)
                         {
                             <tr>
                                 <td>@item.Title</td>
