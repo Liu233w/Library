@@ -57,5 +57,19 @@ namespace Library.LibraryService
         /// </summary>
         /// <returns></returns>
         Task<GetNotificationCountOutput> GetNotificationCount();
+
+        /// <summary>
+        /// 获取用户的照片 id
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<GetUserPhotoOutput> GetUserPhoto(GetUserPhotoInput input);
+
+        /// <summary>
+        /// 设定本用户的照片
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task SetUserPhoto(SetUserPhotoInput input);
     }
 }

@@ -11,6 +11,7 @@ using Abp.Domain.Uow;
 using Abp.Notifications;
 using Abp.UI;
 using Library.Authorization;
+using Library.Authorization.Users;
 using Library.BookManage;
 using Library.LibraryService.Dto;
 using Library.Notification;
@@ -26,8 +27,9 @@ namespace Library.LibraryService
         private readonly IUserNotificationManager _userNotificationManager;
         private readonly IRepository<Copy, long> _copyRepository;
         private readonly ICurrentUnitOfWorkProvider _currentUowProvider;
+        private readonly IRepository<UserPhoto, long> _userPhotoRepository;
 
-        public LibraryAppService(IRepository<Book, long> bookRepository, IRepository<BorrowRecord, long> borrowRecordRepository, BookInfoManager bookInfoManager, IUserNotificationManager userNotificationManager, IRepository<Copy, long> copyRepository, ICurrentUnitOfWorkProvider currentUowProvider)
+        public LibraryAppService(IRepository<Book, long> bookRepository, IRepository<BorrowRecord, long> borrowRecordRepository, BookInfoManager bookInfoManager, IUserNotificationManager userNotificationManager, IRepository<Copy, long> copyRepository, ICurrentUnitOfWorkProvider currentUowProvider, IRepository<UserPhoto, long> userPhotoRepository)
         {
             _bookRepository = bookRepository;
             _borrowRecordRepository = borrowRecordRepository;
@@ -35,6 +37,7 @@ namespace Library.LibraryService
             _userNotificationManager = userNotificationManager;
             _copyRepository = copyRepository;
             _currentUowProvider = currentUowProvider;
+            _userPhotoRepository = userPhotoRepository;
         }
 
         public async Task<BookWithStatusAndMine> GetBook(GetBookInput input)
@@ -176,6 +179,51 @@ namespace Library.LibraryService
                 UnreadCount = await _userNotificationManager.GetUserNotificationCountAsync(
                     userIdentifier, UserNotificationState.Unread)
             };
+        }
+
+        [AbpAuthorize]
+        public async Task<GetUserPhotoOutput> GetUserPhoto(GetUserPhotoInput input)
+        {
+            long userId;
+            if (input.UserId.HasValue)
+            {
+                if (!await IsGrantedAsync(PermissionNames.Pages_LibraryManage))
+                {
+                    throw new AbpAuthorizationException("You can't check other user's photo");
+                }
+
+                userId = input.UserId.Value;
+            }
+            else
+            {
+                userId = AbpSession.UserId.Value;
+            }
+
+            var photo = await _userPhotoRepository.FirstOrDefaultAsync(
+                item => item.UserId == userId);
+            return new GetUserPhotoOutput
+            {
+                PhotoId = photo?.PhotoId
+            };
+        }
+
+        [AbpAuthorize]
+        public async Task SetUserPhoto(SetUserPhotoInput input)
+        {
+            var photo = await _userPhotoRepository.FirstOrDefaultAsync(
+                item => item.UserId == AbpSession.UserId.Value);
+            if (photo == null)
+            {
+                await _userPhotoRepository.InsertAsync(new UserPhoto
+                {
+                    UserId = AbpSession.UserId.Value,
+                    PhotoId = input.PhotoId
+                });
+            }
+            else
+            {
+                photo.PhotoId = input.PhotoId;
+            }
         }
 
         public async Task<ListResultDto<BookWithStatusAndMine>> GetBookList()
