@@ -21,5 +21,7 @@ namespace Library.Web.Views.Shared.Components.SideBarUserArea
                 ? ".\\" + userName
                 : LoginInformations.Tenant.TenancyName + "\\" + userName;
         }
+
+        public string UserPhotoSrc { get; set; }
     }
 }
