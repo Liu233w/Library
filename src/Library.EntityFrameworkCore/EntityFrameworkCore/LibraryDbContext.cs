@@ -17,6 +17,7 @@ namespace Library.EntityFrameworkCore
         public DbSet<BorrowRecord> BorrowRecords { get; set; }
         public DbSet<Copy> Copys { get; set; }
         public DbSet<BinaryObject> BinaryObjects { get; set; }        
+        public DbSet<UserPhoto> UserPhotos { get; set; }
 
         public LibraryDbContext(DbContextOptions<LibraryDbContext> options)
             : base(options)
