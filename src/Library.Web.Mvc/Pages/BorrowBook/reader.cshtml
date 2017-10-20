@@ -1,0 +1,73 @@
+﻿@page
+
+@using Library.LibraryService
+@using Library.LibraryService.Dto
+@using Library.Users.Dto
+
+@{
+    Layout = null;
+}
+
+@inject ILibraryManageAppService LibraryManageAppService
+@inject ILibraryAppService LibraryAppService
+
+@functions
+{
+
+    public UserDto User { get; set; }
+    public string UserPhotoSrc { get; set; }
+
+    public async Task OnPostAsync(string userNameOrEmail)
+    {
+        User = await LibraryManageAppService.GetUserByNameOrEmail(new GetUserByNameOrEmail
+        {
+            UserNameOrEmail = userNameOrEmail
+        });
+
+        var userPhoto = await LibraryAppService.GetUserPhoto(new GetUserPhotoInput
+        {
+            UserId = User.Id
+        });
+
+        if (userPhoto.PhotoId.HasValue)
+        {
+            UserPhotoSrc = "/Uploads/GetFile?id=" + userPhoto.PhotoId.Value;
+        }
+        else
+        {
+            UserPhotoSrc = "";
+        }
+    }
+
+}
+
+<div class="body">
+    <div class="header">
+        Student Information
+    </div>
+    <div class="row clearfix">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+            <img class="img img-responsive" src="@UserPhotoSrc" alt="Book Photo" />
+        </div>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-9">
+            <label>User Name</label>
+            <div class="form-group">
+                <div class="form-line">
+                    <p>@User.UserName</p>
+                </div>
+            </div>
+            <label>Student Name</label>
+            <div class="form-group">
+                <div class="form-line">
+                    <p>@User.FullName</p>
+                </div>
+            </div>
+            <label>Email</label>
+            <div class="form-group">
+                <div class="form-line">
+                    <p>@User.EmailAddress</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

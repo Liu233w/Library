@@ -16,19 +16,24 @@
 @functions
 {
 
-    public async Task<IActionResult> OnPostAsync(string userid, long copyid)
-    {
-
-        var bookInput = new BorrowBookInput()
+        public async Task<IActionResult> OnPostAsync(string userid, long copyid)
         {
-            UserNameOrEmail = userid,
-            CopyId = copyid
-        };
-        await LibraryManageAppService.BorrowBook(bookInput);
-        return new RedirectToRouteResult(null);
-    }
 
+            var bookInput = new BorrowBookInput()
+            {
+                UserNameOrEmail = userid,
+                CopyId = copyid
+            };
+            await LibraryManageAppService.BorrowBook(bookInput);
+            return new RedirectToRouteResult(null);
+        }
 }
+
+@section scripts
+{ 
+    <script src="~/view-resources/Pages/BorrowBook/Index.js"></script>
+}
+
 <!--
 <script>
     window.onload=function(){
@@ -43,7 +48,7 @@
             if (true) { alert("Borrow successfully"); }
             else if (0) { alert("You can borrow up to 2 books."); }
             else if (0) { alert("The reader have fine not payed!");}
-        
+
         }*/
     };
 </script>-->
@@ -58,114 +63,49 @@
                 <form id="sign_in" method="POST">
                     @Html.AntiForgeryToken()
                     <div class="msg"><h3>please scan the book's copyid</h3></div>
-                   
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <div class="input-group">
-                         
                             <span class="input-group-addon">
                                 <i class="material-icons">book</i>
                             </span>
                             <div class="form-line">
-                            
                                 <input id="copyid" type="text" class="form-control" name="copyid" placeholder="copyid" required autofocus value="">
-                                <br/>
+                                <br />
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-8">
+                    <div class="col-sm-9">
+                    <div class="input-group">
+                        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                            <div class="card" id="copy-info">
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-sm-3">
                         <div class="input-group">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="card">
-                                    <div class="header">
-                                        <h2>
-                                            Book Information
-                                        </h2>
-                                        <div class="body">
-                                            <div class="row clearfix">
-                                                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
-
-                                                    <!--书的图片-->
-                                                    <img id="book_img" src="~/images/user.png" style="width:80%;height:90%">
-                                                    
-                                                </div>
-                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
-
-                                                    <label for="BookTitle">Book Title</label>
-                                                    <div class="form-group">
-                                                        <div class="form-line">
-                                                            <p>Book Title</p>
-                                                        </div>
-                                                    </div>
-                                                    <label for="BookID">Book ID</label>
-                                                    <div class="form-group">
-                                                        <div class="form-line">
-                                                            <p>Book ID</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            <span class="input-group-addon">
+                                <i class="material-icons">person</i>
+                            </span>
+                            <div class="form-line">
+                                <input id="userid" type="text" class="form-control" name="userid" placeholder="userid or email" required value="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                                <div class="card" id="reader-info">
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <button id="borrow" class="btn btn-block bg-pink waves-effect center-block" type="submit">Borrow</button>
+                        </div>
                     </div>
-
-                    <div class="msg"><h3>please scan the student's copyid</h3></div>
-                    <div class="col-sm-4">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="material-icons">person</i>
-                                        </span>
-                                        <div class="form-line">
-
-                                            <input id="userid" type="text" class="form-control" name="userid" placeholder="userid or email" required value="">
-                                        </div>
-                                    </div>
-                                </div>
-                    <div class="col-sm-8">
-                        <div class="input-group">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                            <div class="card">
-                                                <div class="header">
-                                                    <h2>
-                                                        Student Information
-                                                    </h2>
-
-                                                    <div class="body">
-                                                        <div class="row clearfix">
-                                                            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
-                                                                <!--学生照片-->
-                                                                <img id="stu_img" src="~/images/user.png" style="width:80%;height:90%">
-                                                            </div>
-                                                            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
-                                                                <label for="StudentID">Student ID</label>
-                                                                <div class="form-group">
-                                                                    <div class="form-line">
-                                                                        <p>Student ID</p>
-                                                                    </div>
-                                                                </div>
-                                                                <label for="StudentName">Student Name</label>
-                                                                <div class="form-group">
-                                                                    <div class="form-line">
-                                                                        <p>Student Name</p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-xs-4">
-                                        <center><button id="borrow" class="btn btn-block bg-pink waves-effect" type="submit">Borrow</button></center>
-                                    </div>
-                                </div>
-</form>
+                </form>
             </div>
         </div>
     </div>

@@ -1,0 +1,55 @@
+﻿@page
+
+@using Abp.Application.Services.Dto
+@using Library.BookManage
+@using Library.BookManage.Dto
+@using Library.Sessions
+
+
+@inject IBookAppService BookAppService
+
+@{
+    Layout = null;
+}
+@functions{
+
+    public BookDto Book { get; set; }
+
+    public async Task OnPostAsync(long copyId)
+    {
+        Book = await BookAppService.GetBookByCopyId(new GetBookByCopyIdInput
+        {
+            CopyId = copyId
+        });
+    }
+}
+<div class="body">
+    <div class="header">
+        Book Information
+    </div>
+    <div class="row clearfix">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+            @{
+                var imgSrc = Book.BookPhotoId.HasValue ?
+                    "/Uploads/GetFile?id=" + Book.BookPhotoId.Value :
+                    "";
+            }
+            <img class="img img-responsive" src="@imgSrc" alt="Book Photo" />
+        </div>
+
+        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-9">
+            <label>Book Title</label>
+            <div class="form-group">
+                <div class="form-line">
+                    <p>@Book.Title</p>
+                </div>
+            </div>
+            <label>Author</label>
+            <div class="form-group">
+                <div class="form-line">
+                    <p>@Book.Author</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
