@@ -22,10 +22,39 @@
 @{
     ViewBag.CurrentPageName = PageNames.PersonnalInformation;
 }
-@functions
-{
 
+@section scripts
+{
+    <script src="~/lib/blueimp-file-upload/js/vendor/jquery.ui.widget.js"></script>
+    <script src="~/lib/blueimp-file-upload/js/jquery.iframe-transport.js"></script>
+    <script src="~/lib/blueimp-file-upload/js/jquery.fileupload.js"></script>
+    
+    <script>
+        $(function() {
+            $('#file-upload').fileupload({
+                dataType: 'json',
+                add: function(e, data) {
+                    $('#upload-status').text('Uploading...');
+                    data.submit();
+                },
+                done: function(e, data) {
+                    var id = data._response.result.result[0].id;
+                    $('#upload-status').text('');
+                    abp.services.app.library.setUserPhoto({
+                        photoId: id
+                    });
+                    $('#user-photo').attr('src', '/Uploads/GetFile?id=' + id);
+                }
+            });
+        })
+    </script>
 }
+
+@section styles 
+{
+    <link href="~/lib/blueimp-file-upload/css/jquery.fileupload.css" rel="stylesheet"/>
+}
+
 <div class="row clearfix">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="card">
@@ -53,39 +82,45 @@
                         <div class="col-lg-9 col-md-5 col-sm-8 col-xs-9">
                             <table class="table" border="1" bordercolor="#ccc" style="width:100%;height:100%">
                                 @{
-                            var user = await AccountAppService.GetUserInformation(); //获取用户信息
+                                    var user = await AccountAppService.GetUserInformation(); //获取用户信息
+                                    var userPhoto = await LibraryAppService.GetUserPhoto(new GetUserPhotoInput
+                                    {
+                                        UserId = null
+                                    });
                                 }
-                                @{
-                                    <tbody>
-                                        <tr>
-                                            <th scope="row">UserName</th>
-                                            <td>@user.UserName</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Name</th>
-                                            <td>@user.Name</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">Surname</th>
-                                            <td>@user.Surname</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">EmailAddress</th>
-                                            <td>@user.EmailAddress</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">RoleNames</th>
-                                            <td>@user.RoleNames</td>
-                                        </tr>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">UserName</th>
+                                        <td>@user.UserName</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Name</th>
+                                        <td>@user.Name</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Surname</th>
+                                        <td>@user.Surname</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">EmailAddress</th>
+                                        <td>@user.EmailAddress</td>
+                                    </tr>
 
-                                    </tbody>
-                                }
+                                </tbody>
 
                             </table>
                         </div>
                         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                            <img id="user_photo" src="~/images/user.png" style="width:80%;height:90%"/>
-                            
+                            @if (userPhoto.PhotoId.HasValue)
+                            {
+                                <img id="user-photo" src="/Uploads/GetFile?id=@userPhoto.PhotoId.Value" style="width: 80%; height: 90%"/>
+                            }
+                            else
+                            {
+                                <img id="user-photo" src="~/images/user.png" style="width:80%;height:90%"/>
+                            }
+                            <input type="file" id="file-upload" data-url="/Uploads/UploadFiles"/>
+                            <span id="upload-status"></span>
                         </div>
                     </div>
                 </div>
