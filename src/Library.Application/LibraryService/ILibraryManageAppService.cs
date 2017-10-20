@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Abp.Application.Services.Dto;
 using Library.LibraryService.Dto;
+using Library.Users.Dto;
 
 namespace Library.LibraryService
 {
@@ -63,5 +64,12 @@ namespace Library.LibraryService
         /// <param name="input"></param>
         /// <returns></returns>
         Task DeleteNotification(DeleteNotificationInput input);
+
+        /// <summary>
+        /// 通过用户名或邮箱来获取用户信息
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        Task<UserDto> GetUserByNameOrEmail(GetUserByNameOrEmail input);
     }
 }

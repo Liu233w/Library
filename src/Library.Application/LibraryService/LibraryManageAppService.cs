@@ -27,8 +27,9 @@ namespace Library.LibraryService
         private readonly INotificationPublisher _notificationPublisher;
         private readonly IRepository<TenantNotificationInfo, Guid> _tenantNotificationRepository;
         private readonly IRepository<UserNotificationInfo, Guid> _userNotificationRepository;
+        private readonly UserManager _userManager;
 
-        public LibraryManageAppService(IRepository<Book, long> bookRepository, BookInfoManager bookInfoManager, IRepository<BorrowRecord, long> borrowedRecordRepository, INotificationPublisher notificationPublisher, IRepository<TenantNotificationInfo, Guid> tenantNotificationRepository, IRepository<UserNotificationInfo, Guid> userNotificationRepository)
+        public LibraryManageAppService(IRepository<Book, long> bookRepository, BookInfoManager bookInfoManager, IRepository<BorrowRecord, long> borrowedRecordRepository, INotificationPublisher notificationPublisher, IRepository<TenantNotificationInfo, Guid> tenantNotificationRepository, IRepository<UserNotificationInfo, Guid> userNotificationRepository, UserManager userManager)
         {
             _bookRepository = bookRepository;
             _bookInfoManager = bookInfoManager;
@@ -36,6 +37,7 @@ namespace Library.LibraryService
             _notificationPublisher = notificationPublisher;
             _tenantNotificationRepository = tenantNotificationRepository;
             _userNotificationRepository = userNotificationRepository;
+            _userManager = userManager;
         }
 
         public async Task<BookWithStatusAndRecord> GetBookStatus(GetBookStatusInput input)
@@ -177,6 +179,17 @@ namespace Library.LibraryService
                 item => item.TenantNotificationId == notification.Id);
 
             await _tenantNotificationRepository.DeleteAsync(notification);
+        }
+
+        public async Task<UserDto> GetUserByNameOrEmail(GetUserByNameOrEmail input)
+        {
+            var user = await _userManager.FindByNameOrEmailAsync(input.UserNameOrEmail);
+            if (user == null)
+            {
+                throw new UserFriendlyException("User doesn't exist");
+            }
+
+            return ObjectMapper.Map<UserDto>(user);
         }
 
         private async Task<BorrowRecordWithAdditionalInfo> GetOutputRecord(BorrowRecord record)
