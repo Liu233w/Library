@@ -95,7 +95,7 @@ namespace Library.Web.Startup
                         PageNames.BorrowState,
                         L("BorrowState"),
                         url: "BorrowState",
-                        icon: "terrain",
+                        icon: "library_books",
                         requiredPermissionName: PermissionNames.Pages_LibraryManage
                         )
                 ).AddItem(
