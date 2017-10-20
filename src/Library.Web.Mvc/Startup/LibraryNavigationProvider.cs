@@ -90,6 +90,14 @@ namespace Library.Web.Startup
                         icon: "assignment_return",
                         requiredPermissionName: PermissionNames.Pages_LibraryManage
                         )
+                 ).AddItem(
+                    new MenuItemDefinition(
+                        PageNames.BorrowState,
+                        L("BorrowState"),
+                        url: "BorrowState",
+                        icon: "terrain",
+                        requiredPermissionName: PermissionNames.Pages_LibraryManage
+                        )
                 ).AddItem(
                     new MenuItemDefinition(
                         PageNames.PersonnalInformation,

@@ -92,5 +92,6 @@
     <text name="BorrowBook">Borrow Book</text>
     <text name="ReturnBook">Return Book</text>
     <text name="PersonnalInformation">Personnal Information</text>
+    <text name="BorrowState">Borrow State</text>
   </texts>
 </localizationDictionary>
