@@ -33,6 +33,21 @@
                 }
             }
         }
+<style>
+    #content {
+        width: 250px;
+        height: 250px;
+        border: 5px solid #ccc;
+        background: #f1f1f1;
+        position: relative;
+    }
+
+    #book-photo {
+        width: 240px;
+        height: 240px;
+        top: 0;
+    }
+</style>
 <div class="modal-header">
     <h4 class="modal-title">
         <span>Searching Result</span>
@@ -84,12 +99,32 @@
                             <tr>
                                 <th scope="row">Recevice Date</th>
                                 <td>
-                                    @bookstatus.BorrowTimeLimit;
+                                    @bookstatus.BorrowTimeLimit
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Location</th>
+                                <td>
+                                    @bookstatus.Location
                                 </td>
                             </tr>
                             <tr>
                                 <th scope="row">Description</th>
                                 <td>@bookstatus.Description</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Picture of Book</th>
+                                <td>
+                                @if (bookstatus.BookPhotoId.HasValue)
+                                {
+                                    <div id="content">
+                                        <img id="book-photo" src="/Uploads/GetFile?id=@bookstatus.BookPhotoId.Value" />
+                                    </div>
+                                }
+                                else
+                                {
+                                    <img id="book-photo" src="~/images/user.png" />
+                                }</td>
                             </tr>
                             }
                         </tbody>
