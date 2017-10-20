@@ -173,7 +173,6 @@
                 data.submit();
             },
             done: function(e, data) {
-                console.log(data);
                 var id = data._response.result.result[0].id;
                 $('#upload-status').text('Finished');
                 $('#file-id').attr('value', id);
