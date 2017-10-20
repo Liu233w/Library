@@ -59,7 +59,7 @@
                     @Html.AntiForgeryToken()
                     <div class="msg"><h3>please scan the book's copyid</h3></div>
                    
-                    <div class="col-sm-3">
+                    <div class="col-sm-4">
                         <div class="input-group">
                          
                             <span class="input-group-addon">
@@ -72,9 +72,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-9">
+                    <div class="col-sm-8">
                         <div class="input-group">
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                 <div class="card">
                                     <div class="header">
                                         <h2>
@@ -82,20 +82,21 @@
                                         </h2>
                                         <div class="body">
                                             <div class="row clearfix">
-                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
 
                                                     <!--书的图片-->
+                                                    <img id="book_img" src="~/images/user.png" style="width:80%;height:90%">
                                                     
                                                 </div>
-                                                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-9">
+                                                <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
 
-                                                    <label for="email_address">Book Title</label>
+                                                    <label for="BookTitle">Book Title</label>
                                                     <div class="form-group">
                                                         <div class="form-line">
                                                             <p>Book Title</p>
                                                         </div>
                                                     </div>
-                                                    <label for="password">Book ID</label>
+                                                    <label for="BookID">Book ID</label>
                                                     <div class="form-group">
                                                         <div class="form-line">
                                                             <p>Book ID</p>
@@ -109,8 +110,9 @@
                             </div>
                         </div>
                     </div>
-                   
-                                <div class="col-sm-3">
+
+                    <div class="msg"><h3>please scan the student's copyid</h3></div>
+                    <div class="col-sm-4">
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="material-icons">person</i>
@@ -121,9 +123,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-9">
-                                    <div class="input-group">
-                                        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                             <div class="card">
                                                 <div class="header">
                                                     <h2>
@@ -132,17 +134,18 @@
 
                                                     <div class="body">
                                                         <div class="row clearfix">
-                                                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                                            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
                                                                 <!--学生照片-->
+                                                                <img id="stu_img" src="~/images/user.png" style="width:80%;height:90%">
                                                             </div>
-                                                            <div class="col-lg-5 col-md-5 col-sm-5 col-xs-9">
-                                                                <label for="email_address">Student ID</label>
+                                                            <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12">
+                                                                <label for="StudentID">Student ID</label>
                                                                 <div class="form-group">
                                                                     <div class="form-line">
                                                                         <p>Student ID</p>
                                                                     </div>
                                                                 </div>
-                                                                <label for="password">Student Name</label>
+                                                                <label for="StudentName">Student Name</label>
                                                                 <div class="form-group">
                                                                     <div class="form-line">
                                                                         <p>Student Name</p>
