@@ -103,7 +103,7 @@ namespace Library.Web.Startup
                         PageNames.PersonnalInformation,
                         L("PersonnalInformation"),
                         url: "PersonnalInformation",
-                        icon: "pan_tool",
+                        icon: "assignment_return",
                         requiredPermissionName: PermissionNames.Pages_Library
                         )
 #if DEBUG
