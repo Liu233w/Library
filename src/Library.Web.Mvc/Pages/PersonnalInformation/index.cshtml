@@ -46,6 +46,27 @@
                     $('#user-photo').attr('src', '/Uploads/GetFile?id=' + id);
                 }
             });
+
+            $("#table1").DataTable({
+                responsive: true,
+                columns: [
+                    null,
+                    null,
+                    null,
+                    null
+                ]
+            });
+
+            $("#table2").DataTable({
+                responsive: true,
+                columns: [
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+                ]
+            });
         })
     </script>
 }
@@ -176,7 +197,7 @@
 
 
             <div class="body table-responsive">
-                <table class="table" id="table">
+                <table class="table" id="table1">
                     <thead>
                         <tr>
                             <th>Title</th>
@@ -229,7 +250,7 @@
                 </ul>
             </div>
             <div class="body table-responsive">
-                <table class="table" id="table">
+                <table class="table" id="table2">
                     <thead>
                         <tr>
                             <th>Title</th>
