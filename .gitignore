@@ -260,7 +260,8 @@ Logs.txt
 
 # readme
 !/dist/README.txt
-!/migrator/README.txt
+!/migrator/deploy-database.cmd
+!/migrator/deploy-database.sh
 
 # uploads
 /src/Library.Web.Mvc/App_Data/Upload
