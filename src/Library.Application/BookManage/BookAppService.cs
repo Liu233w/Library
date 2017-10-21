@@ -36,7 +36,18 @@ namespace Library.BookManage
 
         public async Task DeleteCopy(DeleteCopyInput input)
         {
+            await EnsureCopyNotBorrowAsync(input.CopyId);
             await _copyRepository.DeleteAsync(input.CopyId);
+        }
+
+        private async Task EnsureCopyNotBorrowAsync(long copyId)
+        {
+            var record = await _bookInfoManager.FindRecordOrNullByCopyIdAsync(copyId);
+            if (record != null)
+            {
+                throw new UserFriendlyException(
+                    "That copy heavn't returned");
+            }
         }
 
         public async Task<GetCopysOutput> GetCopys(GetCopysInput input)
@@ -118,6 +129,24 @@ namespace Library.BookManage
             var res = MapToEntityDto(book);
             res.Count = await _copyRepository.CountCopysByBookIdAsync(book.Id);
             return res;
+        }
+
+        public override async Task Delete(EntityDto<long> input)
+        {
+            var book = await Repository.FirstOrDefaultAsync(input.Id);
+            if (book == null)
+            {
+                throw new UserFriendlyException("Book isn't exist");
+            }
+
+            await _bookInfoManager.LoadCopysFromBookAsync(book);
+
+            foreach (var copy in book.Copys)
+            {
+                await EnsureCopyNotBorrowAsync(copy.Id);
+            }
+
+            await base.Delete(input);
         }
     }
 }

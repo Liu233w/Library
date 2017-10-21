@@ -143,5 +143,12 @@ namespace Library.LibraryService
                 .Where(item => item.BorrowerUserId == userId)
                 .AnyAsync();
         }
+
+        [UnitOfWork]
+        public async Task<BorrowRecord> FindRecordOrNullByCopyIdAsync(long copyId)
+        {
+            return await _borrowRecordRepository.FirstOrDefaultAsync(
+                item => item.CopyId == copyId);
+        }
     }
 }
