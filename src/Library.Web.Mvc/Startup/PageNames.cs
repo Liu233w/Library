@@ -16,6 +16,6 @@
         public const string ReturnBook = "ReturnBook";
         public const string PersonnalInformation = "PersonnalInformation";
         public const string BorrowState = "BorrowState";
-
+        public const string BookCopys = "BookCopys";
     }
 }
