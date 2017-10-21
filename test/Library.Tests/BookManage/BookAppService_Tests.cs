@@ -55,6 +55,11 @@ namespace Library.Tests.BookManage
             await InjectBooksDataAsync();
             await InjectTestUser();
             var record = await InjectBorrowRecord1AndGetAsync(0);
+            record.IsDeleted = true;
+            UsingDbContext(ctx =>
+            {
+                ctx.BorrowRecords.Update(record);
+            });
 
             //Act
             await _bookAppService.DeleteCopy(new DeleteCopyInput
@@ -72,6 +77,23 @@ namespace Library.Tests.BookManage
                 newRecord.ShouldNotBeNull("The record shouldn't be deleted");
                 newRecord.CopyId.ShouldBe(Book1Copy1.Id);
             });
+        }
+
+        [Fact]
+        public async Task DeleteCopy_ShouldThrowWhenBookNotReturned()
+        {
+            await InjectBooksDataAsync();
+            await InjectTestUser();
+            await InjectBorrowRecord1AndGetAsync(0);
+
+            //Act
+            var task = _bookAppService.DeleteCopy(new DeleteCopyInput
+            {
+                CopyId = Book1Copy1.Id
+            });
+
+            //Asserts
+            await task.ShouldThrowAsync<UserFriendlyException>();
         }
 
         [Fact]
