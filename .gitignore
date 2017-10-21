@@ -256,9 +256,11 @@ Logs.txt
 
 # dist file
 /dist/*
+/migrator/*
 
 # readme
 !/dist/README.txt
+!/migrator/README.txt
 
 # uploads
 /src/Library.Web.Mvc/App_Data/Upload

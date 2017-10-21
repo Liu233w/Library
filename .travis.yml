@@ -25,7 +25,9 @@ script:
 before_deploy:
   - cd build
   - sh build.sh
+  - sh build-migrator.sh
   - cd ..
+  - zip -r migrator.zip migrator/
   - zip -r dist.zip dist/
   - zip -r sqls.zip sql/
 
@@ -35,6 +37,7 @@ deploy:
   file:
     - dist.zip
     - sqls.zip
+    - migrator.zip
   skip_cleanup: true
   on:
     tags: true
