@@ -27,12 +27,14 @@ before_deploy:
   - sh build.sh
   - cd ..
   - zip -r dist.zip dist/
+  - zip -r sqls.zip sql/
 
 deploy:
   provider: releases
   api_key: "d041edda1db6dd816936aa3bb3c9320dba492e36"
   file:
     - dist.zip
+    - sqls.zip
   skip_cleanup: true
   on:
     tags: true
