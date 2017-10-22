@@ -21,7 +21,7 @@ The project is hosted on [GitHub](https://github.com/Liu233w/Library). I need to
 ## Requirement
 - Windows or Linux system
 - Sql Server (Or Sql Server Express) 2012+
-- Dotnet Core 2.0+
+- DotNet Core Runtime 2.0+ (If you want to compile the repo yourself, you also need to install DotNet Core SDK)
 - Nodejs 7+ (please add the path of the executable to your system variable `path`)
 - If you use Windows system, you may need IIS
 
@@ -33,12 +33,12 @@ You can get the files by:
 
 or
 
-2. Open repo folder and run the script `build/build.sh` to build dist file and `build/build-migrator.sh` to build migrator. The `cmd` script is for windows users.
+2. Open repo folder and run the script `build/build.sh` to build binary file and `build/build-migrator.sh` to build migrator. The `cmd` script is for windows users.
 
 ### Deploy database
-1. Extract the `migrator.zip` or go to the `migrator` folder in the repo.
+1. Extract the `migrator.zip` or go to the `migrator` folder in the repo (if you compile the binary file yourself).
 2. Edit the connection string in `appsetting.json`.
-3. Execute `deploy-database.sh` in the folder or just execute `dotnet Library.Migrator`
+3. Execute script file `deploy-database.sh` in the folder or just execute the command `dotnet Library.Migrator` in the folder
 4. Follow the instruction in the program
 5. If you can't use migrator, you can deploy database by sql script. The script file is at `sqls` folder in the repo. Or sqls.zip in the release page.
 
@@ -46,4 +46,4 @@ or
 1. Extract the `dist.zip` or go to the `dist` folder
 2. Edit the connection string in `appsetting.json`.
 3. If you use the windows server and iis, just add a new website with the dist folder as content folder, just as you did before.
-4. If you use Linux, you can execute `dotnet Library.Web.Mvc` in `dist` folder. The program will open a port on localhost:5000. You can use nginx or other reverse proxy program to deploy it.
+4. If you use Linux, you can execute `dotnet Library.Web.Mvc` in `dist` folder. The program will open a port on `localhost:5000`. You can use nginx or other reverse proxy program as you like.
