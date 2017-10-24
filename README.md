@@ -16,14 +16,14 @@ The project is hosted on [GitHub](https://github.com/Liu233w/Library). I need to
 - Deng Xiongfei 2015303205
 - Gao Chenyu 2015303199
 
-## Deployment
-
 ## Requirement
 - Windows or Linux system
 - Sql Server (Or Sql Server Express) 2012+
 - DotNet Core Runtime 2.0+ (If you want to compile the repo yourself, you also need to install DotNet Core SDK)
 - Nodejs 7+ (please add the path of the executable to your system variable `path`)
 - If you use Windows system, you may need IIS
+
+## Deployment
 
 ### Get the migraton and dist file
 
