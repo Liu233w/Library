@@ -33,7 +33,8 @@ before_deploy:
 
 deploy:
   provider: releases
-  api_key: "d041edda1db6dd816936aa3bb3c9320dba492e36"
+  api_key:
+    secure: PaS8ZVOP7b/HnBvoBDySEBtLLkEpbjIvmWwq4wIIqjru2/rBr4VDgzEQN53UMTKdis8qgz0mzzkYcJkuSdpTHR/uPgpdyLQTnVae+RVlXS8dckxuLxEDeX1rZRBPQ//VBzCLtLUAHLzqg8CunqU23RMESiQYCUGdFpyCFm+EnjCEH6IOsXSmyQL2v4DQBSwLyf4S1ytD5CI8RrdEtEf5W2QdTjaDxV0tgJeLv2G5och25U+JPFK1WSnLaXGKymiTVe6ikM2eU2DE7S47coLnuNpeYZgoZAVkyRKhYBuN32ucbi2DqK3lPy6NP3fYOjyoO4VGPLrdTSGn2taSjhFyHNBPGgwpOJ4cwcvA6JJI5MUneJWyLcsG9DVztKbCjDGLLqbOeB1WEfLGL2Qq3+QTla4XCNXXw/1HtHxfzqedNgJOP0N7sGLaisC/ogTwYz9c8Vws+42EUrsvuqDIr0sZfL8otXYuFxS/vLEEqpSALcrgu4XOh9kOzYlfE3QJqb1bMdw1TZmZi2ATC7vEHtnh81ddGAX4R6P7Iuvff/mzqcDASG4jtnLELEN4d6lilAAWenkE8jpVhNe4jX3sPgW+pdc6UMC4hVPJBTc8VPm71Imy/+oCdV46s1yaOnZVxUjWolKGT/aQy5w1yhUFsJcpDoJM/E6VkCl9f9aW+SebgiA=
   file:
     - dist.zip
     - sqls.zip
