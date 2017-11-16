@@ -1,6 +1,6 @@
 # Library Manage System (图书管理系统)
 
-[![Build Status](https://travis-ci.com/Liu233w/Library.svg?token=at1dz5LtwtReX6e4EKDg&branch=master)](https://travis-ci.com/Liu233w/Library)
+[![Build Status](https://travis-ci.org/Liu233w/Library.svg?branch=master)](https://travis-ci.org/Liu233w/Library)
 
 The project is hosted on [GitHub](https://github.com/Liu233w/Library). I need to add you to the project or you can't see it as a result of private repo.
 
